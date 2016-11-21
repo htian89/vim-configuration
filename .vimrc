@@ -98,11 +98,11 @@ NeoBundle 'Shougo/my-plugin'
 if (version > 704 || (version == 704 && has('patch143'))) && (has('python') || has('python3'))
     NeoBundle 'Shougo/YouCompleteMe'
 elseif has('lua')
-    NeoBundle 'Shougo/neocomplete'
+    NeoBundle 'Shougo/neocomplete.vim'
 else
-    NeoBundle 'Shougo/neocomplcache'
+    NeoBundle 'Shougo/neocomplcache.vim'
 endif
-NeoBundle 'Shougo/neosnippet'
+NeoBundle 'Shougo/neosnippet.vim'
 NeoBundle 'Shougo/neosnippet-snippets'
 if has('conceal')
     NeoBundle 'Shougo/jedi-vim'
@@ -112,11 +112,10 @@ endif
 NeoBundle 'Shougo/auto-pairs'
 NeoBundle 'Shougo/nerdtree'
 NeoBundle 'Shougo/vim-pathogen'
-NeoBundle 'Shougo/vim-plugin-minibufexpl'
-NeoBundle 'Shougo/vim-taglist-plus'
+NeoBundle 'Shougo/minibufexpl.vim'
 NeoBundle 'Shougo/tagbar'
-"NeoBundle 'Shougo/vim-airline'
-"NeoBundle 'Shougo/vim-airline-themes'
+" NeoBundle 'Shougo/vim-airline'
+" NeoBundle 'Shougo/vim-airline-themes'
 NeoBundle 'Shougo/vim-startify'
 
 call neobundle#end()
