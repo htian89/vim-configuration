@@ -31,5 +31,5 @@ set -x
 for plugin in ${plugins[@]}
 do
     plugin_name=`echo ${plugin}|awk -F'/' '{print $2}'` 
-    git submodule add ${github_ssh}${plugin}.git .vim/bundle/${plugin_name}
+    git submodule add ${github_https}${plugin}.git .vim/bundle/${plugin_name}
 done
