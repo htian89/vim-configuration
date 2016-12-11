@@ -2,8 +2,8 @@
 set nu
 set autoindent
 set smarttab
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
 set pastetoggle=<F9>
 set hls
@@ -44,7 +44,13 @@ let g:neocomplcache_enable_at_startup = 1
 
 " Set vim-airline plugin
 " Set airlien theme
-" let g:airline_theme='base16color'
+let g:airline_theme='base16color'
+" 打开tabline功能,方便查看Buffer和切换,省去了minibufexpl插件
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+" 关闭状态显示空白符号计数
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#symbol = '!'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set neosnippet plugin
@@ -112,10 +118,10 @@ endif
 NeoBundle 'Shougo/auto-pairs'
 NeoBundle 'Shougo/nerdtree'
 NeoBundle 'Shougo/vim-pathogen'
-NeoBundle 'Shougo/minibufexpl.vim'
+" NeoBundle 'Shougo/minibufexpl.vim'
 NeoBundle 'Shougo/tagbar'
-" NeoBundle 'Shougo/vim-airline'
-" NeoBundle 'Shougo/vim-airline-themes'
+NeoBundle 'Shougo/vim-airline'
+NeoBundle 'Shougo/vim-airline-themes'
 NeoBundle 'Shougo/vim-startify'
 
 call neobundle#end()
@@ -142,11 +148,11 @@ noremap <C-n> :NERDTreeToggle<CR>
 
 " Other keys
 " noremap ff :w<CR>
-" noremap <F5> :!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q<CR><CR>:TlistUpdate<CR>
-cnoremap Ctags :!ctags -R<CR><CR>:set tags=tags<CR>
-" noremap <F6> :!grep * -Irn --color --exclude=tags -e ""<Left>
-" cnoremap Grep :!grep * -Irn --color --exclude=tags -e "<C-R>=expand("<cword>")<CR>"<CR>
 
+"inoremap <C-h> <Left>
+"inoremap <C-j> <Down>
+"inoremap <C-k> <Up>
+inoremap <C-l> <Right>
 inoremap <S-Tab> <BS>
 inoremap <C-b> <BS>
 inoremap <C-d> <Del>
