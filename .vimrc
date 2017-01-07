@@ -101,6 +101,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " Refer to |:NeoBundle-examples|.
 " Note: You don't set neobundle setting in .gvimrc!
 NeoBundle 'Shougo/my-plugin'
+NeoBundle 'Shougo/blade'
 if (version > 704 || (version == 704 && has('patch143'))) && (has('python') || has('python3'))
     NeoBundle 'Shougo/YouCompleteMe'
 elseif has('lua')
