@@ -503,8 +503,9 @@ function! AlternateOpenFileUnderCursor(splitWindow,...)
       let b:openCount = openCount
       let b:cursorFile = cursorFile
       let b:currentPath = currentPath
+      return "true"
    else
-      echo "Can't find file"
+      return "false"
    endif
 endfunction
 

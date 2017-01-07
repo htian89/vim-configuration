@@ -46,6 +46,9 @@ The commands I always use:
 		    $ 跳转至行尾 
 		2,多处跳转：
 		    g] 等价于|:tselect|, List the tags that match [ident]
+		3,格式化文本，调整缩进
+		    |==|   格式化一行,支持选中格式化
+		    |gg=G| 全局格式化
 
 		NeoBundle~
 		1,Use |:NeoBundleDocs| after change the help documents.

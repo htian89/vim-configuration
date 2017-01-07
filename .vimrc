@@ -134,8 +134,28 @@ filetype plugin indent on
 NeoBundleCheck
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Auto open Tagbar
-autocmd VimEnter * TagbarOpen
+" Auto open some plugins
+" Get file type
+let f_t = expand("%:e")
+" Auto load tags
+if f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py" 
+  if !filereadable("./tags")
+    autocmd VimEnter * call CreateAndLoadCtags("only load")
+  endif
+endif
+" Auto open Tagbar and Colorcolumn
+if f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py" || f_t == "vim"
+      \|| f_t == "sh"
+  " Auto remove trailing space
+  autocmd BufReadPost * :%s/\s\+$//e
+  autocmd BufWritePre * :%s/\s\+$//e
+  " Auto remove trailing ^M
+  " autocmd BufReadPost * :%s/\^M$//e
+  " Open tag bar
+  autocmd VimEnter * TagbarOpen
+  " Open colorcolumn
+  autocmd VimEnter * CC
+endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Map some specific keys for shortcuts
@@ -184,3 +204,6 @@ colorscheme peachpuff
 " Set comment color
 highlight Comment term=bold ctermfg=lightGray guifg=lightGray
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup filetype
+    autocmd! BufRead,BufNewFile BUILD set filetype=blade
+augroup end
