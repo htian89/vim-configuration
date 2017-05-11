@@ -26,14 +26,51 @@ function! AlternateColorColumn(...)
     endif
 endfunction
 
-function! GrepWord(bang, ...)
-  let cmd = "grep . -Irn --color --exclude=tags --exclude-dir=*.runfiles --exclude-dir=build64_* -e "
+function! GrepWordOld(bang, ...)
+  let cmd = "silent vimgrep /"
   if a:0 > 0
     let cmd = cmd . a:1
   else
     let cmd = cmd . expand("<cword>")
   endif
-  call RunAndEchoCommand(cmd)
+  let cmd = cmd . "/ **/*.cc **/*.h **/*.proto"
+  call RunAndEchoVimCommand(cmd)
+  call RunAndEchoVimCommand("botright cw")
+endfunction
+
+function! GrepWord(bang, ...)
+  if a:0 > 0
+    "let cmd = "Grepper " . join(a:000, ' ')
+    call GrepWordOld(a:bang, a:1)
+    return
+  else
+    let cmd = "Grepper -grepprg grep . -Irn --color --exclude=tags --exclude-dir=*.runfiles --exclude-dir=build64_* -e "
+  endif
+  call RunAndEchoVimCommand(cmd)
+endfunction
+
+function! AsyncGrepWord(bang, ...)
+  let cmd = "AsyncRun grep . -Irn --color --exclude=tags --exclude-dir=*.runfiles --exclude-dir=build64_* -e "
+  if a:0 > 0
+    let cmd = cmd . a:1
+  else
+    let cmd = cmd . expand("<cword>")
+  endif
+  call RunAndEchoVimCommand(cmd)
+endfunction
+
+function! SearchGflag(bang, ...)
+  if a:0 > 0
+    let word = a:1
+  else
+    let word = expand("<cword>")
+  endif
+  if word[0:5] == 'FLAGS_'
+    let cmd = '('. word[6:-1]
+  else
+    let cmd = 'FLAGS_' . word
+  endif
+  let n = search(cmd)
 endfunction
 
 function! GotoDefinition()
@@ -43,7 +80,7 @@ endfunction
 function! CreateAndLoadCtags(option)
   let l:cwd = getcwd()
   let l:cpp_opt = '
-    \ --languages=c++ 
+    \ --languages=c++
     \ --c++-kinds=+px
     \ --fields=+aiKSz
     \ --extra=+q
@@ -75,8 +112,8 @@ function! CreateAndLoadCtags(option)
   endfor
   " Create ctags
   if a:option != "only load"
-    let cmd = "ctags -R --exclude=tags" . l:cpp_opt . l:exclude_opt
-    call RunAndEchoCommand(cmd)
+    let cmd = "AsyncRun ctags -R --exclude=*tags" . l:cpp_opt . l:exclude_opt
+    call RunAndEchoVimCommand(cmd)
   endif
   " Load ctags
   call AddTagsInCwdPath()
@@ -85,14 +122,15 @@ endfunction
 function! ClearVimWindow()
   if &number != 0
     execute ":set nonumber"
+    execute ":TagbarClose"
   else
     execut ":set number"
+    execute ":TagbarOpen"
   endif
-  execute ":TagbarToggle"
 endfunction
 
 function! AlternateOpenFileUnderCursorWithIndex(splitWindow,...)
-  let l:cursorFile = expand("<cfile>") 
+  let l:cursorFile = expand("<cfile>")
   if (a:0 > 0)
     let l:file = a:1 . "/". l:cursorFile
     let result = AlternateOpenFileUnderCursor(a:splitWindow, l:file)
@@ -135,14 +173,29 @@ function! OpenFileWithGrepResult(...)
   endif
 endfunction
 
+function! SetErrorFormat()
+  let l:pwd = system('pwd')[:-2]
+  let l:path = FindFileInPathAndUpperPath(l:pwd, 'BLADE_ROOT')
+  let l:part = l:pwd[strlen(l:path) + 1 : -1]
+  if strlen(l:part)
+    let l:part = l:part . '/'
+  endif
+  let &errorformat = l:part . '%f:%l:\ error:\ %m'
+  set errorformat
+  set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
+endfunction
+
 " Use to test vim script
 comm! -nargs=? -bang Test call TestVimScript()
 " Colorcolumn toggle
 comm! -nargs=? -bang CC call AlternateColorColumn(<f-args>)
-nmap <Leader>cc :CC<CR>
+" nmap <Leader>cc :CC<CR>
 " Global search word
 comm! -nargs=? -bang Grep call GrepWord("<bang>", <f-args>)
 comm! -nargs=? -bang Grepw call GrepWord("<bang>", <f-args>)
+comm! -nargs=? -bang Agrep call AsyncGrepWord("<bang>", <f-args>)
+" Search Gflag
+comm! -nargs=? -bang SF call SearchGflag("<bang>", <f-args>)
 " Unused command, copy from internet
 map <F8> :call GotoDefinition()<CR>
 imap <F8> <c-o>:call GotoDefinition()<CR>

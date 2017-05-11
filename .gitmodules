@@ -55,3 +55,18 @@
 [submodule ".vim/bundle/vim-powerline"]
 	path = .vim/bundle/vim-powerline
 	url = https://github.com/Lokaltog/vim-powerline.git
+[submodule ".vim/bundle/asyncrun.vim"]
+	path = .vim/bundle/asyncrun.vim
+	url = https://github.com/skywind3000/asyncrun.vim.git
+[submodule ".vim/bundle/vimmake"]
+	path = .vim/bundle/vimmake
+	url = https://github.com/skywind3000/vimmake.git
+[submodule ".vim/bundle/errormarker.vim"]
+	path = .vim/bundle/errormarker.vim
+	url = https://github.com/vim-scripts/errormarker.vim.git
+[submodule ".vim/bundle/vim-fugitive"]
+	path = .vim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git
+[submodule ".vim/bundle/vim-grepper"]
+	path = .vim/bundle/vim-grepper
+	url = https://github.com/mhinz/vim-grepper.git

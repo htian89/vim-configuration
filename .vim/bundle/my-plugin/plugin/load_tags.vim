@@ -1,5 +1,5 @@
 function! s:CheckAndAddTagFile(path)
-  if stridx(a:path, '/') == (strlen(a:path) - 1)
+  if s:StrEndWith(a:path, '/')
     let l:tags = a:path . 'tags'
   else
     let l:tags = a:path . '/tags'
@@ -25,6 +25,28 @@ function! s:StrEndWith(str, pattern)
   else
     return 0
   endif
+endfunction
+
+function! SplitPathReverse(path)
+  let l:start = strlen(a:path)
+  let l:list = []
+  if !s:StrEndWith(a:path, '/')
+    call add(l:list, a:path)
+  endif
+
+  while 1 == 1
+    let l:idx = strridx(a:path, '/', l:start)
+    let l:start = l:idx - 1
+
+    if l:idx == -1
+      break
+    endif
+
+    let l:part = a:path[0:(l:idx > 0 ? l:idx - 1 : l:idx)]
+    call add(l:list, l:part)
+  endwhile
+
+  return l:list
 endfunction
 
 function! SplitPath(path)
@@ -53,7 +75,7 @@ endfunction
 function! AddTagsInCwdPath()
   let l:cwd = tr(expand('%:p:h'), '\', '/')
 
-  let l:pathes = SplitPath(l:cwd)
+  let l:pathes = SplitPathReverse(l:cwd)
 
   for p in l:pathes
     if s:CheckAndAddTagFile(p)
@@ -93,4 +115,21 @@ function! CreateAndLoadCtagsUnused(option)
     endif
   endfor
   call AddTagsInCwdPath()
+endfunction
+
+function! FindFileInPathAndUpperPath(path, file)
+  let l:pathes = SplitPathReverse(a:path)
+
+  for p in l:pathes
+    let l:file = ''
+    if s:StrEndWith(a:path, '/')
+      let l:file = p . a:file
+    else
+      let l:file = p . '/' . a:file
+    endif
+    if filereadable(l:file)
+      return p
+    endif
+  endfor
+  return -1
 endfunction

@@ -20,12 +20,17 @@ tpope/vim-pathogen
 fholgado/minibufexpl.vim
 mhinz/vim-startify
 vim-scripts/taglist.vim
+skywind3000/asyncrun.vim
+skywind3000/vimmake
+vim-scripts/errormarker.vim
+tpope/vim-fugitive
+mhinz/vim-grepper
 )
 
 github_ssh='git@github.com:'
 github_https='https://github.com/'
 
-function install() 
+function install()
 {
     if [ -e $HOME/.vim ]; then
         if [ -L $HOME/.vim ]; then
@@ -37,7 +42,7 @@ function install()
             mv $HOME/.vim $HOME/.vim_bak
         fi
     fi
-    
+
     if [ -e $HOME/.vimrc ]; then
         if [ -L $HOME/.vimrc ]; then
             echo "Remove old .vimrc link."
@@ -48,7 +53,7 @@ function install()
             mv $HOME/.vimrc $HOME/.vimrc_bak
         fi
     fi
-    
+
     ln -s $LOCAL/.vim $HOME/.vim
     ln -s $LOCAL/.vimrc $HOME/.vimrc
     echo "Link $LOCAL/.vim to $HOME/.vim"
@@ -83,7 +88,7 @@ function uninstall()
 function add_submodule() {
     local plugins=$@;
     for plugin in ${plugins[@]}; do
-        plugin_name=`echo ${plugin}|awk -F'/' '{print $2}'` 
+        plugin_name=`echo ${plugin}|awk -F'/' '{print $2}'`
         if [ -e .vim/bundle/${plugin_name} ]; then
             echo "${plugin_name} already exists"
         else
@@ -93,8 +98,8 @@ function add_submodule() {
 }
 
 function checkout_submodule() {
-    git submodule update --init --recursive 
-    git checkout 
+    git submodule update --init --recursive
+    git checkout
 }
 
 function usage()
