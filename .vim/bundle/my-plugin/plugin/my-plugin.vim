@@ -191,9 +191,9 @@ comm! -nargs=? -bang Test call TestVimScript()
 comm! -nargs=? -bang CC call AlternateColorColumn(<f-args>)
 " nmap <Leader>cc :CC<CR>
 " Global search word
-comm! -nargs=? -bang Grep call GrepWord("<bang>", <f-args>)
+" comm! -nargs=? -bang Grep call GrepWord("<bang>", <f-args>)
 comm! -nargs=? -bang Grepw call GrepWord("<bang>", <f-args>)
-comm! -nargs=? -bang Agrep call AsyncGrepWord("<bang>", <f-args>)
+comm! -nargs=? -bang Grep call AsyncGrepWord("<bang>", <f-args>)
 " Search Gflag
 comm! -nargs=? -bang SF call SearchGflag("<bang>", <f-args>)
 " Unused command, copy from internet
