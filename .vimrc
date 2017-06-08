@@ -145,6 +145,22 @@ let g:vimmake_mode['make'] = 'async'
 let g:vimmake_mode['run'] = 'async'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Set clang format plugin
+let g:clang_format#style_options = {
+            \ "AccessModifierOffset" : -4,
+            \ "AllowShortIfStatementsOnASingleLine" : "true",
+            \ "AlwaysBreakTemplateDeclarations" : "true",
+            \ "Standard" : "C++11"}
+
+" map to <Leader>cf in C++ code
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+" if you install vim-operator-user
+autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
+" Toggle auto formatting:
+nmap <Leader>C :ClangFormatAutoToggle<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Neobundle
 " Note: Skip initialization for vim-tiny or vim-small.
 if 0 | endif
@@ -195,6 +211,8 @@ NeoBundle 'Shougo/vimmake'
 NeoBundle 'Shougo/errormarker.vim'
 NeoBundle 'Shougo/vim-fugitive'
 NeoBundle 'Shougo/vim-grepper'
+NeoBundle 'Shougo/vim-operator-user'
+NeoBundle 'Shougo/vim-clang-format'
 
 call neobundle#end()
 

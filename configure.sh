@@ -25,6 +25,8 @@ skywind3000/vimmake
 vim-scripts/errormarker.vim
 tpope/vim-fugitive
 mhinz/vim-grepper
+rhysd/vim-clang-format
+kana/vim-operator-user
 )
 
 github_ssh='git@github.com:'
