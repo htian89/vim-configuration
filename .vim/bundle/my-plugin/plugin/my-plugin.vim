@@ -44,13 +44,17 @@ function! GrepWord(bang, ...)
     call GrepWordOld(a:bang, a:1)
     return
   else
-    let cmd = "Grepper -grepprg grep . -Irn --color --exclude=tags --exclude-dir=*.runfiles --exclude-dir=build64_* -e "
+    let cmd = "Grepper -grepprg grep . -Irn --color --exclude=tags "
+          \ . "--exclude-dir=*.runfiles --exclude-dir=build64_* "
+          \ . "--exclude-dir=blade-bin -e "
   endif
   call RunAndEchoVimCommand(cmd)
 endfunction
 
 function! AsyncGrepWord(bang, ...)
-  let cmd = "AsyncRun grep . -Irn --color --exclude=tags --exclude-dir=*.runfiles --exclude-dir=build64_* -e "
+  let cmd = "AsyncRun grep . -Irn --color --exclude=tags "
+        \ . "--exclude-dir=*.runfiles --exclude-dir=build64_* "
+        \ . "--exclude-dir=blade-bin -e "
   if a:0 > 0
     let cmd = cmd . a:1
   else
@@ -160,17 +164,26 @@ function! AlternateOpenFileUnderCursorWithIndex(splitWindow,...)
 endfunction
 
 function! OpenFileWithGrepResult(...)
-  if a:0 > 0
-    let l:colon1 = stridx(a:1, ':')
+  let l:cmd = ""
+  let l:args = split(a:1)
+  for l:i in l:args
+    let l:colon1 = stridx(l:i, ':')
     if l:colon1 == -1
-      return
+      if filereadable(l:i)
+        let l:cmd = "e " . l:i
+        break
+      endif
+    else
+      let l:colon2 = stridx(l:i, ':', l:colon1 + 1)
+      let l:file = l:i[0:(l:colon1 > 0 ? l:colon1 - 1 : 0)]
+      if !filereadable(l:file)
+        continue
+      endif
+      let l:line = l:i[(l:colon1 + 1):(l:colon2 > 0 ? l:colon2 - 1 : -1)]
+      let l:cmd = "e +" . l:line . " " . l:file
     endif
-    let l:colon2 = stridx(a:1, ':', l:colon1 + 1)
-    let l:file = a:1[0:(l:colon1 > 0 ? l:colon1 - 1 : 0)]
-    let l:line = a:1[(l:colon1 + 1):(l:colon2 > 0 ? l:colon2 - 1 : -1)]
-    let l:cmd = "e +" . l:line . " " . l:file
-    call RunAndEchoVimCommand(l:cmd)
-  endif
+  endfor
+  call RunAndEchoVimCommand(l:cmd)
 endfunction
 
 function! SetErrorFormat()
@@ -180,7 +193,12 @@ function! SetErrorFormat()
   if strlen(l:part)
     let l:part = l:part . '/'
   endif
-  let &errorformat = l:part . '%f:%l:\ error:\ %m'
+  echo l:part
+  let &errorformat =
+        \ l:part . '%f:%l:%c:\ error:\ %m' .
+        \ ',' . l:part . '%f:%l:\ error:\ %m' .
+        \ ',./' . l:part . '%f:%l:%c\ error:\ %m' .
+        \ ',./' . l:part . '%f:%l:\ error:\ %m'
   set errorformat
   set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
 endfunction

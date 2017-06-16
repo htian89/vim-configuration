@@ -12,6 +12,7 @@ set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set backspace=indent,eol,start
 set fileformat=unix
 set makeprg=rbuild\ $*
+set splitright
 "set errorformat=%f:%l:\ error:\ %m
 
 " Syntax highlight enable
@@ -79,7 +80,7 @@ let Tlist_Auto_Open = 0
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set tagbar plugin
-let g:tagbar_width = 50
+let g:tagbar_width = 80
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set neocomplete plugin
@@ -211,6 +212,7 @@ NeoBundle 'Shougo/vimmake'
 NeoBundle 'Shougo/errormarker.vim'
 NeoBundle 'Shougo/vim-fugitive'
 NeoBundle 'Shougo/vim-grepper'
+NeoBundle 'Shougo/Conque-GDB'
 NeoBundle 'Shougo/vim-operator-user'
 NeoBundle 'Shougo/vim-clang-format'
 
@@ -250,7 +252,7 @@ if f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py" || f_t == "vim"
   " Auto remove trailing ^M
   " autocmd BufReadPost * :%s/\^M$//e
   " Open tag bar
-  autocmd VimEnter * TagbarOpen
+  " autocmd VimEnter * TagbarOpen
   " Open colorcolumn
   autocmd VimEnter * CC
 endif

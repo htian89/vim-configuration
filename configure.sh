@@ -25,12 +25,17 @@ skywind3000/vimmake
 vim-scripts/errormarker.vim
 tpope/vim-fugitive
 mhinz/vim-grepper
+vim-scripts/Conque-GDB
 rhysd/vim-clang-format
 kana/vim-operator-user
 )
 
 github_ssh='git@github.com:'
 github_https='https://github.com/'
+
+function command_exists() {
+    type "$1" &> /dev/null ;
+}
 
 function install()
 {
@@ -54,6 +59,13 @@ function install()
             rm -f $HOME/.vimrc_bak
             mv $HOME/.vimrc $HOME/.vimrc_bak
         fi
+    fi
+
+    if command_exists clang-format; then
+      echo "Dump clang format config to $HOME/.clang-format"
+      clang-format --style=google --dump-config > $HOME/.clang-format
+    else
+      echo "Can not find clang-format"
     fi
 
     ln -s $LOCAL/.vim $HOME/.vim
