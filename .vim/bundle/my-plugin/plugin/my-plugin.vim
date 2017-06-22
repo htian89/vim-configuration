@@ -18,7 +18,6 @@ endfunction
 function! AlternateColorColumn(...)
     if a:0 > 0
         let &colorcolumn = a:1 + 1
-        set colorcolumn
     elseif &colorcolumn != 0
         set colorcolumn=0
     else
@@ -193,14 +192,13 @@ function! SetErrorFormat()
   if strlen(l:part)
     let l:part = l:part . '/'
   endif
-  echo l:part
   let &errorformat =
         \ l:part . '%f:%l:%c:\ error:\ %m' .
         \ ',' . l:part . '%f:%l:\ error:\ %m' .
         \ ',./' . l:part . '%f:%l:%c\ error:\ %m' .
-        \ ',./' . l:part . '%f:%l:\ error:\ %m'
-  set errorformat
-  set errorformat+=%f:%l:\ undefined\ reference\ to\ %m
+        \ ',./' . l:part . '%f:%l:\ error:\ %m' .
+        \ ',' . l:part . '%f:%l:\ Failure' .
+        \ ',%f:%l:\ undefined\ reference\ to\ %m'
 endfunction
 
 " Use to test vim script
