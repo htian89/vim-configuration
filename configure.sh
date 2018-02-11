@@ -72,13 +72,25 @@ function install()
     ln -s $LOCAL/.vimrc $HOME/.vimrc
     echo "Link $LOCAL/.vim to $HOME/.vim"
     echo "Link $LOCAL/.vimrc to $HOME/.vimrc"
+
+    echo "#My-tools configurations" >> $HOME/.bash_profile
+    echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile
+}
+
+function build_vim()
+{
+    cd $HOME/.vim/vim-source-code
+    ./configure --prefix=/usr --with-features=huge --enable-pythoninterp --enable-python3interp --disable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no --enable-multibyte --enable-cscope
+    make
+    make install DESTDIR=$HOME/.vim/vim-pkg
 }
 
 function install_vim()
 {
     echo "#Vim configurations" >> $HOME/.bash_profile
-    echo "export VIMRUNTIME=\$HOME/.vim/vim80/usr/share/vim/vim80" >> $HOME/.bash_profile
-    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim80/usr/lib64/:\$HOME/.vim/vim80/usr/lib/" >> $HOME/.bash_profile
+    echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim80" >> $HOME/.bash_profile
+    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.bash_profile
+    ln -s $HOME/.vim/vim-pkg/usr/bin/vim $HOME/.vim/my-tools/vim
 }
 
 function uninstall()
@@ -129,6 +141,8 @@ function usage()
 ./configure.sh [
     install         install vim configurations
     uninstall       uninstall vim configurations
+    build_vim       build vim
+    install_vim     install vim
     add_sub         add submodule
     co_sub          checkout submodules
 HELP_END
@@ -140,6 +154,12 @@ LOCAL=`pwd`
 case $1 in
     install)
         install
+    ;;
+    install_vim)
+        install_vim
+    ;;
+    build_vim)
+        build_vim
     ;;
     uninstall)
         uninstall

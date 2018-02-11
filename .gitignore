@@ -1,4 +1,5 @@
 .vim/bundle/.neobundle*
+.vim/vim-pkg
 .vim/.ctags
 patch
 *.swp

@@ -1,0 +1,38 @@
+#!/usr/bin/python
+
+import sys
+import os
+
+if __name__ == "__main__":
+    current_dir = os.getcwd()
+    argv_index = 1
+    if len(sys.argv) > 1 and sys.argv[1] == 'blade':
+        build_tool = 'blade'
+        argv_index = 2
+    else:
+        while current_dir != '/':
+            if os.path.exists(current_dir + '/BLADE_ROOT'):
+                break;
+            current_dir = os.path.dirname(current_dir)
+
+        if current_dir != '/':
+            if os.path.exists(current_dir + '/retrieval2'):
+                build_tool = './build.sh'
+                os.chdir(current_dir + '/retrieval2')
+            elif os.path.exists(current_dir + '/Ad_Servers'):
+                build_tool = './build_git.sh'
+                os.chdir(current_dir + '/Ad_Servers')
+            elif os.path.exists(current_dir + '/src'):
+                build_tool = './build.sh'
+                os.chdir(current_dir + '/src')
+        else:
+            print "Can't find the file 'BLADE_ROOT' in this or any upper directory."
+            sys.exit()
+
+    # Arguments parse
+    arguments = ''
+    for i in range(argv_index, len(sys.argv)):
+        arguments += " " + sys.argv[i]
+
+    # Exec command
+    os.system(build_tool + arguments)

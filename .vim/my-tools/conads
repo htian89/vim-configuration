@@ -1,0 +1,5 @@
+#!/bin/sh
+#if [ ! -f $@ ]; then
+# exec "sshpass -p 0okm(IJN ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null admin@127.0.0.1"
+#fi
+sshpass -p "YTU1OThlNTVhMjQxY2MzMTY0N2VkYWQ2" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null admin@$@

@@ -79,3 +79,6 @@
 [submodule ".vim/bundle/Conque-GDB"]
 	path = .vim/bundle/Conque-GDB
 	url = https://github.com/vim-scripts/Conque-GDB.git
+[submodule ".vim/vim-source-code"]
+	path = .vim/vim-source-code
+	url = https://github.com/vim/vim.git
