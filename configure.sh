@@ -74,6 +74,13 @@ function install()
     echo "Link $LOCAL/.vimrc to $HOME/.vimrc"
 }
 
+function install_vim()
+{
+    echo "#Vim configurations" >> $HOME/.bash_profile
+    echo "export VIMRUNTIME=\$HOME/.vim/vim80/usr/share/vim/vim80" >> $HOME/.bash_profile
+    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim80/usr/lib64/:\$HOME/.vim/vim80/usr/lib/" >> $HOME/.bash_profile
+}
+
 function uninstall()
 {
     if [ -L $HOME/.vim ]; then

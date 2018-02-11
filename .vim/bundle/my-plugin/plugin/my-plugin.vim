@@ -37,23 +37,33 @@ function! GrepWordOld(bang, ...)
   call RunAndEchoVimCommand("botright cw")
 endfunction
 
-function! GrepWord(bang, ...)
-  if a:0 > 0
-    "let cmd = "Grepper " . join(a:000, ' ')
-    call GrepWordOld(a:bang, a:1)
-    return
-  else
-    let cmd = "Grepper -grepprg grep . -Irn --color --exclude=tags "
+function! s:ConstructSearchCommand(tool)
+  if a:tool == "grep"
+    let cmd = "grep . -Irn --color --exclude=tags "
           \ . "--exclude-dir=*.runfiles --exclude-dir=build64_* "
           \ . "--exclude-dir=blade-bin -e "
+  elseif a:tool == "ag"
+    let l:cmd = "ag --vimgrep -s --noaffinity "
+          \ . "--ignore-dir=build64_* --ignore-dir=*.runfiles "
+          \ . "--ignore-dir=blade-bin "
   endif
+  return l:cmd
+endfunction
+
+function! GrepWord(bang, ...)
+  let cmd = "Grepper -grepprg " . s:ConstructSearchCommand("ag")
+        \ . join(a:000, ' ')
+  call RunAndEchoVimCommand(cmd)
+endfunction
+
+function! GrepWordCpp(bang, ...)
+  let cmd = "Grepper -grepprg " . s:ConstructSearchCommand("ag") . "--cpp "
+        \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction
 
 function! AsyncGrepWord(bang, ...)
-  let cmd = "AsyncRun grep . -Irn --color --exclude=tags "
-        \ . "--exclude-dir=*.runfiles --exclude-dir=build64_* "
-        \ . "--exclude-dir=blade-bin -e "
+  let cmd = "AsyncRun " . s:ConstructSearchCommand("ag")
   if a:0 > 0
     let cmd = cmd . a:1
   else
@@ -207,9 +217,8 @@ comm! -nargs=? -bang Test call TestVimScript()
 comm! -nargs=? -bang CC call AlternateColorColumn(<f-args>)
 " nmap <Leader>cc :CC<CR>
 " Global search word
-" comm! -nargs=? -bang Grep call GrepWord("<bang>", <f-args>)
+comm! -nargs=? -bang Grep call GrepWordCpp("<bang>", <f-args>)
 comm! -nargs=? -bang Grepw call GrepWord("<bang>", <f-args>)
-comm! -nargs=? -bang Grep call AsyncGrepWord("<bang>", <f-args>)
 " Search Gflag
 comm! -nargs=? -bang SF call SearchGflag("<bang>", <f-args>)
 " Unused command, copy from internet

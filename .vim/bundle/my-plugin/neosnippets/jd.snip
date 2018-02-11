@@ -1,0 +1,24 @@
+# Jd Copyright
+snippet jdcopyright
+options     head
+alias   jdco
+    // Copyright (c) 2018 JD.com Inc.
+    // Author: Tian hao (tianhao3@jd.com)
+
+# Retrieval namespace
+snippet renamespace
+options     head
+alias rename
+  namespace ads {
+  namespace retrieval {
+      ${0:TARGET}
+  }  // namespace retrieval
+  }  // namespace ads
+
+# Engine namespace
+snippet enginenamespace
+options     head
+alias enginename
+  namespace index_engine {
+      ${0:TARGET}
+  }  // namespace index_engine

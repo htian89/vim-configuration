@@ -13,6 +13,7 @@ set backspace=indent,eol,start
 set fileformat=unix
 set makeprg=rbuild\ $*
 set splitright
+set viminfo='1000,f1
 "set errorformat=%f:%l:\ error:\ %m
 
 " Syntax highlight enable
@@ -127,7 +128,12 @@ endif
 let g:neosnippet#enable_snipmate_compatibility = 1
 
 " Tell Neosnippet about the other snippets
-let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
+let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,
+      \ ~/.vim/bundle/my-plugin/neosnippets'
+
+
+" Load my snippets
+autocmd BufEnter * :NeoSnippetSource ~/.vim/bundle/my-plugin/neosnippets/jd.snip
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set fugitive plugin
@@ -136,8 +142,9 @@ command! -bang -nargs=* -complete=file Make AsyncRun -program=make @ <args>
 
 " Set Grepper
 let g:grepper = {}
-let g:grepper.stop = 500
+let g:grepper.stop = 1000
 let g:grepper.highlight = 1
+let g:grepper.switch = 1
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set vimmake plugin
@@ -160,6 +167,10 @@ autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
 " Toggle auto formatting:
 nmap <Leader>C :ClangFormatAutoToggle<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set Conque plugin
+let g:ConqueGdb_SrcSplit = 'left'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Neobundle
