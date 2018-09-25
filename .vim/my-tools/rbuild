@@ -6,6 +6,7 @@ import os
 if __name__ == "__main__":
     current_dir = os.getcwd()
     argv_index = 1
+    build_tool = ''
     if len(sys.argv) > 1 and sys.argv[1] == 'blade':
         build_tool = 'blade'
         argv_index = 2
@@ -27,7 +28,6 @@ if __name__ == "__main__":
                 os.chdir(current_dir + '/src')
         else:
             print "Can't find the file 'BLADE_ROOT' in this or any upper directory."
-            sys.exit()
 
     # Arguments parse
     arguments = ''

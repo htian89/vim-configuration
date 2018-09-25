@@ -1,0 +1,1 @@
+/home/tianhao3/bin/blade/vim/syntax/blade.vim

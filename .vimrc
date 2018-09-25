@@ -197,7 +197,8 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundle 'Shougo/my-plugin'
 NeoBundle 'Shougo/blade'
 if (version > 704 || (version == 704 && has('patch143'))) && (has('python') || has('python3'))
-    NeoBundle 'Shougo/YouCompleteMe'
+    " NeoBundle 'Shougo/YouCompleteMe'
+    NeoBundle 'Shougo/neocomplcache.vim'
 elseif has('lua')
     NeoBundle 'Shougo/neocomplete.vim'
 else

@@ -43,7 +43,7 @@ function! s:ConstructSearchCommand(tool)
           \ . "--exclude-dir=*.runfiles --exclude-dir=build64_* "
           \ . "--exclude-dir=blade-bin -e "
   elseif a:tool == "ag"
-    let l:cmd = "ag --vimgrep -s --noaffinity "
+    let l:cmd = "ag --vimgrep -s --noaffinity --ignore-dir=tags "
           \ . "--ignore-dir=build64_* --ignore-dir=*.runfiles "
           \ . "--ignore-dir=blade-bin "
   endif
@@ -118,6 +118,7 @@ function! CreateAndLoadCtags(option)
     \'text_analysis',
     \'thirdparty',
     \'word_vector_sim',
+    \'output',
     \]
   let l:exclude_opt = ""
   for l:exclude in l:retrieval_excludes
