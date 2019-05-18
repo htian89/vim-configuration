@@ -140,6 +140,19 @@ function checkout_submodule() {
     git checkout
 }
 
+function update_submodule() {
+    git submodule update --init --remote
+}
+
+function create_archive() {
+    rm -f ../herman-vim.tar.gz
+    tar zcvf ../herman-vim.tar.gz --exclude=.vim/bundle/YouCompleteMe --exclude=.vim/vim-pkg * .vim*
+    temp_path=`pwd`
+    echo 'Create archive:'
+    echo ${temp_path%/*}'/herman-vim.tar.gz'
+    echo 'Package size: '`du -sh ../herman-vim.tar.gz`
+}
+
 function usage()
 {
     cat << HELP_END
@@ -150,6 +163,8 @@ function usage()
     install_vim     install vim
     add_sub         add submodule
     co_sub          checkout submodules
+    up_sub          update submodules
+    tar             Compress documents to archive
 HELP_END
 }
 
@@ -175,8 +190,11 @@ case $1 in
     co_sub)
         checkout_submodule $plugins
     ;;
+    up_sub)
+        update_submodule $plugins
+    ;;
     tar)
-        tar zcvf ../my-vim.tar.gz --exclude=.vim/bundle/YouCompleteMe --exclude=.vim/vim-pkg * .vim*
+        create_archive
     ;;
     --help|-h|*)
         usage
