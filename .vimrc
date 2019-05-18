@@ -20,6 +20,10 @@ set viminfo='1000,f1
 syntax on
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Restore cursor to file position in previous editing session
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Set YouCompeleteMe plugin
 " 自动补全配置
 set completeopt=longest,menu

@@ -75,6 +75,10 @@ function install()
 
     echo "#My-tools configurations" >> $HOME/.bash_profile
     echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile
+
+    cd $HOME/.vim/bundle/YouCompleteMe
+    ./install.py --clang-completer
+    cd -
 }
 
 function build_vim()
@@ -90,6 +94,7 @@ function install_vim()
     echo "#Vim configurations" >> $HOME/.bash_profile
     echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim80" >> $HOME/.bash_profile
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.bash_profile
+    rm -f $HOME/.vim/my-tools/vim
     ln -s $HOME/.vim/vim-pkg/usr/bin/vim $HOME/.vim/my-tools/vim
 }
 
@@ -169,6 +174,9 @@ case $1 in
     ;;
     co_sub)
         checkout_submodule $plugins
+    ;;
+    tar)
+        tar zcvf ../my-vim.tar.gz --exclude=.vim/bundle/YouCompleteMe --exclude=.vim/vim-pkg * .vim*
     ;;
     --help|-h|*)
         usage
