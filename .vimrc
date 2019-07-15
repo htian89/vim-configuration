@@ -161,10 +161,6 @@ let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,
 " autocmd BufEnter * :NeoSnippetSource ~/.vim/bundle/my-plugin/neosnippets/jd.snip
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Set fugitive plugin
-command! -bang -nargs=* -complete=file Make AsyncRun -program=make @ <args>
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 " Set Grepper
 let g:grepper = {}
 let g:grepper.stop = 1000

@@ -239,3 +239,12 @@ comm! -nargs=? -bang UHS call AlternateOpenFileUnderCursorWithIndex("h<bang>", <
 comm! -nargs=? -bang UHV call AlternateOpenFileUnderCursorWithIndex("v<bang>", <f-args>)
 comm! -nargs=? -bang UHT call AlternateOpenFileUnderCursorWithIndex("t<bang>", <f-args>)
 comm! -nargs=1 -bang E call OpenFileWithGrepResult(<f-args>)
+
+" Set fugitive plugin
+"command! -bang -nargs=* -complete=file Make "AsyncRun -program=make @ <args>"
+function! MakeCommand(...)
+  execute ":copen"
+  execute ":AsyncRun -program=make " . join(a:000)
+endfunction
+comm! -nargs=? -bang Make call MakeCommand(<f-args>)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
