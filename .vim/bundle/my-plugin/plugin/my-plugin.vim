@@ -99,9 +99,9 @@ function! CreateAndLoadCtags(option)
     \ --extra=+q
     \'
   let l:retrieval_excludes = [
-    \'*.js',
-    \'*.o',
-    \'lib*.so*',
+    \'"*.js"',
+    \'"*.o"',
+    \'"lib*.so*"',
     \'addsubmodule.sh',
     \'BLADE_ROOT',
     \'build64_release',
@@ -126,7 +126,7 @@ function! CreateAndLoadCtags(option)
   endfor
   " Create ctags
   if a:option != "only load"
-    let cmd = "AsyncRun ctags -R --exclude=*tags" . l:cpp_opt . l:exclude_opt
+    let cmd = "AsyncRun ctags -R --exclude=tags" . l:cpp_opt . l:exclude_opt
     call RunAndEchoVimCommand(cmd)
   endif
   " Load ctags
@@ -199,9 +199,13 @@ endfunction
 function! SetErrorFormat()
   let l:pwd = system('pwd')[:-2]
   let l:path = FindFileInPathAndUpperPath(l:pwd, 'BLADE_ROOT')
-  let l:part = l:pwd[strlen(l:path) + 1 : -1]
-  if strlen(l:part)
-    let l:part = l:part . '/'
+  if l:path == -1
+    let l:part = ""
+  else
+    let l:part = l:pwd[strlen(l:path) + 1 : -1]
+    if strlen(l:part)
+      let l:part = l:part . '/'
+    endif
   endif
   let &errorformat =
         \ l:part . '%f:%l:%c:\ error:\ %m' .

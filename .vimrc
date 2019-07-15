@@ -46,9 +46,10 @@ let g:ycm_key_list_select_completion = ['<Down>']
 "let g:ycm_key_list_previous_completion=['<c-p>']
 let g:ycm_key_list_previous_completion = ['<Up>']
 let g:ycm_confirm_extra_conf=0 "关闭加载.ycm_extra_conf.py提示
+let g:ycm_key_list_stop_completion = ['<CR>']
 
 let g:ycm_collect_identifiers_from_tags_files=1 " 开启 YCM 基于标签引擎
-let g:ycm_min_num_of_chars_for_completion=2 "从第2个键入字符就开始罗列匹配项
+let g:ycm_min_num_of_chars_for_completion=1 "从第1个键入字符就开始罗列匹配项
 let g:ycm_cache_omnifunc=0  " 禁止缓存匹配项,每次都重新生成匹配项
 let g:ycm_seed_identifiers_with_syntax=1  " 语法关键字补全
 nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>  "force recomile with syntastic
@@ -64,7 +65,27 @@ let g:ycm_collect_identifiers_from_comments_and_strings = 0
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR> "
 "跳转到定义处"
-" "
+let g:ycm_server_python_interpreter='/usr/bin/python'
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+" 补全候选项的最小字符数
+let g:ycm_min_num_identifier_candidate_chars = 0
+" 关闭诊断显示功能(已经使用了ale进行异步语法检查)
+let g:ycm_show_diagnostics_ui = 0
+" 在用户接受提供的完成字符串后自动关闭窗口
+let g:ycm_autoclose_preview_window_after_completion = 1
+" 自动触发语义补全
+let g:ycm_semantic_triggers =  {
+            \ 'c,cc,cpp,python,java,go,erlang,perl': ['re!\w{1}'],
+            \ 'cs,lua,javascript': ['re!\w{1}'],
+            \ }
+" 遇到下列文件时才会开启YCM
+"let g:ycm_filetype_whitelist = {
+"            \ "c":1,
+"            \ "cc":1,
+"            \ "cpp":1,
+"            \ "python":1,
+"            \ "sh":1,
+"            \ }
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set python mode plugin
@@ -137,7 +158,7 @@ let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,
 
 
 " Load my snippets
-autocmd BufEnter * :NeoSnippetSource ~/.vim/bundle/my-plugin/neosnippets/jd.snip
+" autocmd BufEnter * :NeoSnippetSource ~/.vim/bundle/my-plugin/neosnippets/jd.snip
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set fugitive plugin
@@ -185,65 +206,111 @@ if &compatible
   set nocompatible               " Be iMproved
 endif
 
-" Required:
-set runtimepath+=~/.vim/bundle/neobundle.vim/
+if 0
+  " Required:
+  " Add the dein installation directory into runtimepath
+  set runtimepath+=~/.vim/bundle/dein.vim/
+  call dein#begin('~/.vim/bundle/')
+  call dein#add('Shougo/dein.vim')
+  call dein#add('Shougo/my-plugin')
+  call dein#add('Shougo/blade')
+  if (version > 704 || (version == 704 && has('patch143'))) && (has('python') || has('python3'))
+    call dein#add('Shougo/YouCompleteMe')
+    "call dein#add('Shougo/neocomplcache.vim')
+  elseif has('lua')
+    call dein#add('Shougo/neocomplete.vim')
+  else
+    call dein#add('Shougo/neocomplcache.vim')
+  endif
+  call dein#add('Shougo/deoplete.nvim')
+  call dein#add('Shougo/neosnippet.vim')
+  call dein#add('Shougo/neosnippet-snippets')
+  if has('conceal') && has('python')
+    call dein#add('Shougo/jedi-vim')
+  else
+    call dein#add('Shougo/python-mode')
+  endif
+  call dein#add('Shougo/auto-pairs')
+  call dein#add('Shougo/nerdtree')
+  call dein#add('Shougo/vim-pathogen')
+  " call dein#add('Shougo/minibufexpl.vim')
+  call dein#add('Shougo/tagbar')
+  call dein#add('Shougo/vim-airline')
+  call dein#add('Shougo/vim-airline-themes')
+  call dein#add('Shougo/vim-startify')
+  call dein#add('Shougo/asyncrun.vim')
+  call dein#add('Shougo/vimmake')
+  call dein#add('Shougo/errormarker.vim')
+  call dein#add('Shougo/vim-fugitive')
+  call dein#add('Shougo/vim-grepper')
+  call dein#add('Shougo/Conque-GDB')
+  call dein#add('Shougo/vim-operator-user')
+  call dein#add('Shougo/vim-clang-format')
 
-" Required:
-call neobundle#begin(expand('~/.vim/bundle/'))
+  call dein#end()
+  call dein#save_state()
 
-" Let NeoBundle manage NeoBundle
-" Required:
-NeoBundleFetch 'Shougo/neobundle.vim'
+else
 
-" My Bundles here:
-" Refer to |:NeoBundle-examples|.
-" Note: You don't set neobundle setting in .gvimrc!
-NeoBundle 'Shougo/my-plugin'
-NeoBundle 'Shougo/blade'
-if (version > 704 || (version == 704 && has('patch143'))) && (has('python') || has('python3'))
-    " NeoBundle 'Shougo/YouCompleteMe'
-    NeoBundle 'Shougo/neocomplcache.vim'
-elseif has('lua')
+  " Let NeoBundle manage NeoBundle
+  " Required:
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+  call neobundle#begin(expand('~/.vim/bundle/'))
+  NeoBundleFetch 'Shougo/neobundle.vim'
+
+  " My Bundles here:
+  " Refer to |:NeoBundle-examples|.
+  " Note: You don't set neobundle setting in .gvimrc!
+  NeoBundle 'Shougo/my-plugin'
+  NeoBundle 'Shougo/blade'
+  if (version > 704 || (version == 704 && has('patch143'))) && (has('python') || has('python3'))
+    NeoBundle 'Shougo/YouCompleteMe'
+    "NeoBundle 'Shougo/neocomplcache.vim'
+  elseif has('lua')
     NeoBundle 'Shougo/neocomplete.vim'
-else
+  else
     NeoBundle 'Shougo/neocomplcache.vim'
-endif
-NeoBundle 'Shougo/neosnippet.vim'
-NeoBundle 'Shougo/neosnippet-snippets'
-if has('conceal') && has('python')
+  endif
+  NeoBundle 'Shougo/deoplete.nvim'
+  NeoBundle 'Shougo/neosnippet.vim'
+  NeoBundle 'Shougo/neosnippet-snippets'
+  if has('conceal') && has('python')
     NeoBundle 'Shougo/jedi-vim'
-else
-    NeoBundle 'Shougo/python-mode'
-endif
-NeoBundle 'Shougo/auto-pairs'
-NeoBundle 'Shougo/nerdtree'
-NeoBundle 'Shougo/vim-pathogen'
-" NeoBundle 'Shougo/minibufexpl.vim'
-NeoBundle 'Shougo/tagbar'
-NeoBundle 'Shougo/vim-airline'
-NeoBundle 'Shougo/vim-airline-themes'
-NeoBundle 'Shougo/vim-startify'
-NeoBundle 'Shougo/asyncrun.vim'
-NeoBundle 'Shougo/vimmake'
-NeoBundle 'Shougo/errormarker.vim'
-NeoBundle 'Shougo/vim-fugitive'
-NeoBundle 'Shougo/vim-grepper'
-NeoBundle 'Shougo/Conque-GDB'
-NeoBundle 'Shougo/vim-operator-user'
-NeoBundle 'Shougo/vim-clang-format'
+  else
+    " NeoBundle 'Shougo/python-mode'
+  endif
+  NeoBundle 'Shougo/auto-pairs'
+  NeoBundle 'Shougo/nerdtree'
+  NeoBundle 'Shougo/vim-pathogen'
+  " NeoBundle 'Shougo/minibufexpl.vim'
+  NeoBundle 'Shougo/tagbar'
+  NeoBundle 'Shougo/vim-airline'
+  NeoBundle 'Shougo/vim-airline-themes'
+  NeoBundle 'Shougo/vim-startify'
+  NeoBundle 'Shougo/asyncrun.vim'
+  NeoBundle 'Shougo/vimmake'
+  NeoBundle 'Shougo/errormarker.vim'
+  NeoBundle 'Shougo/vim-fugitive'
+  NeoBundle 'Shougo/vim-grepper'
+  NeoBundle 'Shougo/Conque-GDB'
+  NeoBundle 'Shougo/vim-operator-user'
+  NeoBundle 'Shougo/vim-clang-format'
 
-call neobundle#end()
+  call neobundle#end()
+  " If there are uninstalled bundles found on startup,
+  " this will conveniently prompt you to install them.
+  NeoBundleCheck
+  """"""""""""""""""""""""""""""""""""""""""""""""""""""
+endif
 
 " Required:
 filetype plugin indent on
 
-" If there are uninstalled bundles found on startup,
-" this will conveniently prompt you to install them.
-NeoBundleCheck
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Auto open some plugins
+" Auto open some plugins. TODO: May not take effect.
 autocmd! BufWritePost '.vimrc' exec 'source '.$HOME.'/.vimrc'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Get file name
 let f_n = expand("%:t")
 if f_n == "BUILD"
@@ -287,6 +354,7 @@ nnoremap <C-n> :NERDTreeToggle<CR>
 nmap <F6> :cn<cr>
 nmap <F7> :cp<cr>
 noremap <silent><F10> :call vimmake#toggle_quickfix(6)<cr>
+noremap <Leader>q :call vimmake#toggle_quickfix(6)<cr>
 
 " If you like control + vim direction key to navigate
 " windows then perform the remapping
@@ -323,10 +391,20 @@ inoremap <C-b> <BS>
 inoremap <C-d> <Del>
 
 " Choose colorscheme
-colorscheme peachpuff
+colorscheme desert
+" colorscheme default
+" 设置高亮行和列
+" set cursorcolumn
+" set cursorline
+" 设置高亮效果
+" highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+" highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
 " Modify some color of the scheme
 " Set comment color
-highlight Comment term=bold ctermfg=lightGray guifg=lightGray
+" highlight Comment term=bold ctermfg=lightGray guifg=gray guibg=black
+set hlsearch
+hi Search ctermbg=LightYellow
+hi Search ctermfg=Red
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 augroup filetype
     autocmd! BufRead,BufNewFile BUILD set filetype=blade

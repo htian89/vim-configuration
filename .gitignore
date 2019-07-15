@@ -3,3 +3,7 @@
 .vim/.ctags
 patch
 *.swp
+.vim/bundle/NeoBundle.lock
+.vim/cmake/
+.vim/my-tools/cmake
+.vim/vim-source-code/

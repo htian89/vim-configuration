@@ -4,13 +4,17 @@ import sys
 import os
 
 if __name__ == "__main__":
-    current_dir = os.getcwd()
+    pwd_dir = os.getcwd()
     argv_index = 1
     build_tool = ''
     if len(sys.argv) > 1 and sys.argv[1] == 'blade':
         build_tool = 'blade'
         argv_index = 2
+    elif len(sys.argv) > 1 and sys.argv[1] == 'make':
+        build_tool = 'make'
+        argv_index = 2
     else:
+        current_dir = pwd_dir
         while current_dir != '/':
             if os.path.exists(current_dir + '/BLADE_ROOT'):
                 break;
@@ -27,7 +31,8 @@ if __name__ == "__main__":
                 build_tool = './build.sh'
                 os.chdir(current_dir + '/src')
         else:
-            print "Can't find the file 'BLADE_ROOT' in this or any upper directory."
+                os.chdir(pwd_dir)
+                build_tool = './build.sh'
 
     # Arguments parse
     arguments = ''

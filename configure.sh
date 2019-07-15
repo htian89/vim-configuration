@@ -4,9 +4,11 @@ plugins=(
 Valloric/YouCompleteMe
 jiangmiao/auto-pairs
 davidhalter/jedi-vim
+Shougo/dein.vim
 Shougo/neobundle.vim
 Shougo/neocomplcache.vim
 Shougo/neocomplete.vim
+Shougo/deoplete.nvim
 Shougo/neosnippet.vim
 Shougo/neosnippet-snippets
 honza/vim-snippets
@@ -33,68 +35,153 @@ kana/vim-operator-user
 github_ssh='git@github.com:'
 github_https='https://github.com/'
 
+function execshell() {
+  echo "[execshell]$@ begin."
+  eval $@
+  [[ $? != 0 ]] && {
+    echo "[execshell]$@ failed."
+      exit 1
+    }
+  echo "[execshell]$@ success."
+  return 0
+}
+
 function command_exists() {
     type "$1" &> /dev/null ;
 }
 
-function install()
-{
-    if [ -e $HOME/.vim ]; then
-        if [ -L $HOME/.vim ]; then
-            echo "Remove old .vim link"
-            rm -f $HOME/.vim
-        else
-            echo "Move old .vim to $HOME/.vim_bak"
-            rm -rf $HOME/.vim_bak
-            mv $HOME/.vim $HOME/.vim_bak
-        fi
+function link_target() {
+  local targets=$@
+  for target in ${targets[@]}; do
+    if [ -e $HOME/${target} ]; then
+      if [ -L $HOME/${target} ]; then
+        echo "Remove old ${target} link"
+        /bin/rm -f $HOME/${target}
+      else
+        echo "Move old ${target} to $HOME/${target}_bak"
+        /bin/rm -rf $HOME/${target}_bak
+        mv $HOME/${target} $HOME/${target}_bak
+      fi
     fi
-
-    if [ -e $HOME/.vimrc ]; then
-        if [ -L $HOME/.vimrc ]; then
-            echo "Remove old .vimrc link."
-            rm -f $HOME/.vimrc
-        else
-            echo "Move old .vimrc to $HOME/.vimrc_bak"
-            rm -f $HOME/.vimrc_bak
-            mv $HOME/.vimrc $HOME/.vimrc_bak
-        fi
-    fi
-
-    if command_exists clang-format; then
-      echo "Dump clang format config to $HOME/.clang-format"
-      clang-format --style=google --dump-config > $HOME/.clang-format
-    else
-      echo "Can not find clang-format"
-    fi
-
-    ln -s $LOCAL/.vim $HOME/.vim
-    ln -s $LOCAL/.vimrc $HOME/.vimrc
-    echo "Link $LOCAL/.vim to $HOME/.vim"
-    echo "Link $LOCAL/.vimrc to $HOME/.vimrc"
-
-    echo "#My-tools configurations" >> $HOME/.bash_profile
-    echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile
-
-    cd $HOME/.vim/bundle/YouCompleteMe
-    ./install.py --clang-completer
-    cd -
+    ln -s $LOCAL/${target} $HOME/${target}
+    echo "Link $LOCAL/${target} to $HOME/${target}"
+  done
 }
 
-function build_vim()
-{
-    cd $HOME/.vim/vim-source-code
-    ./configure --prefix=/usr --with-features=huge --enable-pythoninterp --enable-python3interp --disable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no --enable-multibyte --enable-cscope
-    make
-    make install DESTDIR=$HOME/.vim/vim-pkg
+function centos_package_check() {
+  local packages=$@
+  local declare -a list
+  for pkg in ${packages[@]}; do
+    rpm -q ${pkg} &> /dev/null
+    if [ $? -ne 0 ]; then
+      list+=(${pkg})
+    fi
+  done
+  if [ ${#list[@]} -ne 0 ]; then
+    sudo yum install -y ${list[@]}
+  fi
+}
+
+function install() {
+  yum install -y the_silver_searcher ctags
+  if command_exists clang-format; then
+    echo "Dump clang format config to $HOME/.clang-format"
+    clang-format --style=google --dump-config > $HOME/.clang-format
+  else
+    exit 1
+  fi
+
+  cd $HOME/.vim/bundle/YouCompleteMe
+  ./install.py --clang-completer || exit 1
+  cd -
+
+  link_target .vim .vimrc
+
+  echo "#My-tools configurations" >> $HOME/.bash_profile
+  echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile
+
+  if [ -f $HOME/.zshrc ]; then
+    echo "#My-tools configurations" >> $HOME/.zshrc
+    echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.zshrc
+  fi
+}
+
+function install_zsh() {
+  centos_package_check "git zsh autojump autojump-fish autojump-zsh \
+    the_silver_searcher ctags"
+  execshell link_target ".zshrc"
+
+  cd $HOME/.oh-my-zsh/custom/plugins/
+  if [ ! -d zsh-autosuggestions ]; then
+    git clone git://github.com/zsh-users/zsh-autosuggestions.git
+  fi
+  if [ ! -d zsh-syntax-highlighting ]; then
+    git clone git://github.com/zsh-users/zsh-syntax-highlighting.git
+  fi
+  cd -
+}
+
+function install_cmake() {
+  centos_package_check "make wget"
+  local pkg_name=cmake-$CMAKE_VERSION
+  if [ ! -f $pkg_name.tar.gz ]; then
+    execshell "wget https://cmake.org/files/v3.11/$pkg_name.tar.gz"
+  fi
+  if [ ! -f $pkg_name.tar.gz ]; then
+    return 0
+  fi
+
+  if [ ! -d $pkg_name ]; then
+    execshell "tar xvf $pkg_name.tar.gz"
+  fi
+  cd $pkg_name \
+    && ./bootstrap --prefix=~/.vim/cmake \
+    && make && make install \
+    && cd - && rm -rf $pkg_name && rm -f $pkg_name.tar.gz
+  if [ ! -L ~/.vim/my-tools/cmake ]; then
+    ln -s ~/.vim/cmake/bin/cmake ~/.vim/my-tools/cmake
+    echo "export CMAKE_ROOT=$HOME/.vim/cmake" >> ~/.zshrc
+  fi
+}
+
+function download_vim() {
+  wget https://ftp.nluug.nl/pub/vim/unix/vim-8.1.tar.bz2
+}
+
+#./configure --prefix=/usr --with-features=huge --enable-pythoninterp --enable-python3interp --disable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no --enable-multibyte --enable-cscope
+function build_vim() {
+  centos_package_check "cscope ncurses ncurses-devel ncurses-libs ncurses-base \
+    python-libs ruby-devel python34 python34-pip python-devel python3-devel \
+    python34-devel"
+  cd $HOME/.vim/vim-source-code
+  make distclean
+  ./configure \
+    --enable-multibyte \
+    --enable-rubyinterp \
+    --enable-pythoninterp \
+    --enable-python3interp \
+    --with-python-config-dir=/usr/lib64/python2.7/config \
+    --with-python3-config-dir=/usr/lib64/python3.4/config-3.4m \
+    --enable-cscope \
+    --enable-gui=auto \
+    --with-features=huge \
+    --enable-fontset \
+    --enable-largefile \
+    --disable-netbeans && make && make install DESTDIR=$HOME/.vim/vim-pkg
+      cd -
 }
 
 function install_vim()
 {
     echo "#Vim configurations" >> $HOME/.bash_profile
-    echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim80" >> $HOME/.bash_profile
+    echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim81" >> $HOME/.bash_profile
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.bash_profile
-    rm -f $HOME/.vim/my-tools/vim
+    if [ -f $HOME/.zshrc ]; then
+      echo "#Vim configurations" >> $HOME/.zshrc
+      echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim81" >> $HOME/.zshrc
+      echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.zshrc
+    fi
+    /bin/rm -f $HOME/.vim/my-tools/vim
     ln -s $HOME/.vim/vim-pkg/usr/bin/vim $HOME/.vim/my-tools/vim
 }
 
@@ -102,14 +189,14 @@ function uninstall()
 {
     if [ -L $HOME/.vim ]; then
         echo "Remove .vim link"
-        rm -f $HOME/.vim
+        /bin/rm -f $HOME/.vim
     else
         echo "Not installed."
     fi
 
     if [ -L $HOME/.vimrc ]; then
         echo "Remove .vimrc link"
-        rm -f $HOME/.vimrc
+        /bin/rm -f $HOME/.vimrc
     fi
 
     if [ -e $HOME/.vim_bak ]; then
@@ -145,7 +232,7 @@ function update_submodule() {
 }
 
 function create_archive() {
-    rm -f ../herman-vim.tar.gz
+    /bin/rm -f ../herman-vim.tar.gz
     tar zcvf ../herman-vim.tar.gz --exclude=.vim/bundle/YouCompleteMe --exclude=.vim/vim-pkg * .vim*
     temp_path=`pwd`
     echo 'Create archive:'
@@ -183,6 +270,12 @@ case $1 in
     ;;
     uninstall)
         uninstall
+    ;;
+    install_zsh)
+        execshell install_zsh
+    ;;
+    install_cmake)
+        execshell install_cmake
     ;;
     add_sub)
         add_submodule ${plugins[@]}
