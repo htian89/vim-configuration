@@ -85,3 +85,6 @@
 [submodule ".vim/bundle/deoplete.nvim"]
 	path = .vim/bundle/deoplete.nvim
 	url = https://github.com/Shougo/deoplete.nvim.git
+[submodule ".vim/vim-source-code"]
+	path = .vim/vim-source-code
+	url = https://github.com/vim/vim.git

@@ -369,8 +369,8 @@ nnoremap <C-Up>    <C-W>k
 " If you like <C-Left> and <C-Right> to switch buffers
 " in the current window then perform the remapping
 "
-nnoremap <C-Left>  :bp<CR>
-nnoremap <C-Right> :bn<CR>
+nnoremap < :bp<CR>
+nnoremap > :bn<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Visual Mode

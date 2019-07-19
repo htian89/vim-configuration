@@ -6,4 +6,5 @@ patch
 .vim/bundle/NeoBundle.lock
 .vim/cmake/
 .vim/my-tools/cmake
-.vim/vim-source-code/
+.vim/my-tools/vim
+.vim/.tmp_dir

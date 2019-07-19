@@ -70,7 +70,6 @@ function link_target() {
 
 function centos_package_check() {
   local packages=$@
-  local declare -a list
   for pkg in ${packages[@]}; do
     rpm -q ${pkg} &> /dev/null
     if [ $? -ne 0 ]; then
@@ -83,7 +82,9 @@ function centos_package_check() {
 }
 
 function install() {
-  yum install -y the_silver_searcher ctags
+  yum -y install @development
+  centos_package_check "epel-release"
+  centos_package_check "the_silver_searcher ctags clang cmake gcc gcc-c++"
   if command_exists clang-format; then
     echo "Dump clang format config to $HOME/.clang-format"
     clang-format --style=google --dump-config > $HOME/.clang-format
@@ -91,25 +92,23 @@ function install() {
     exit 1
   fi
 
-  cd $HOME/.vim/bundle/YouCompleteMe
-  ./install.py --clang-completer || exit 1
-  cd -
-
   link_target .vim .vimrc
+
+  cd $LOCAL/.vim/bundle/YouCompleteMe
+    git submodule update --init --recursive
+    ./install.py --clang-completer || exit 1
+  cd -
 
   echo "#My-tools configurations" >> $HOME/.bash_profile
   echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile
-
-  if [ -f $HOME/.zshrc ]; then
-    echo "#My-tools configurations" >> $HOME/.zshrc
-    echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.zshrc
-  fi
 }
 
 function install_zsh() {
   centos_package_check "git zsh autojump autojump-fish autojump-zsh \
     the_silver_searcher ctags"
   execshell link_target ".zshrc"
+
+  sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
   cd $HOME/.oh-my-zsh/custom/plugins/
   if [ ! -d zsh-autosuggestions ]; then
@@ -140,22 +139,29 @@ function install_cmake() {
     && cd - && rm -rf $pkg_name && rm -f $pkg_name.tar.gz
   if [ ! -L ~/.vim/my-tools/cmake ]; then
     ln -s ~/.vim/cmake/bin/cmake ~/.vim/my-tools/cmake
-    echo "export CMAKE_ROOT=$HOME/.vim/cmake" >> ~/.zshrc
   fi
 }
 
 function download_vim() {
+  cd ./.vim/
+  if [ -d vim-source-code ]; then
+    return 0
+  fi
+  centos_package_check "wget bzip2"
   wget https://ftp.nluug.nl/pub/vim/unix/vim-8.1.tar.bz2
+  tar xvf vim-8.1.tar.bz2
+  mv vim81 vim-source-code
 }
 
 #./configure --prefix=/usr --with-features=huge --enable-pythoninterp --enable-python3interp --disable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no --enable-multibyte --enable-cscope
 function build_vim() {
+  #download_vim
   centos_package_check "cscope ncurses ncurses-devel ncurses-libs ncurses-base \
-    python-libs ruby-devel python34 python34-pip python-devel python3-devel \
-    python34-devel"
-  cd $HOME/.vim/vim-source-code
+    python-libs ruby-devel python34 python34-pip python-devel python34-devel"
+  cd $LOCAL/.vim/vim-source-code
   make distclean
   ./configure \
+    --prefix=/usr \
     --enable-multibyte \
     --enable-rubyinterp \
     --enable-pythoninterp \
@@ -168,7 +174,7 @@ function build_vim() {
     --enable-fontset \
     --enable-largefile \
     --disable-netbeans && make && make install DESTDIR=$HOME/.vim/vim-pkg
-      cd -
+  cd -
 }
 
 function install_vim()
@@ -176,13 +182,8 @@ function install_vim()
     echo "#Vim configurations" >> $HOME/.bash_profile
     echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim81" >> $HOME/.bash_profile
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.bash_profile
-    if [ -f $HOME/.zshrc ]; then
-      echo "#Vim configurations" >> $HOME/.zshrc
-      echo "export VIMRUNTIME=\$HOME/.vim/vim-pkg/usr/share/vim/vim81" >> $HOME/.zshrc
-      echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.zshrc
-    fi
-    /bin/rm -f $HOME/.vim/my-tools/vim
-    ln -s $HOME/.vim/vim-pkg/usr/bin/vim $HOME/.vim/my-tools/vim
+    /bin/rm -f $LOCAL/.vim/my-tools/vim
+    ln -s $LOCAL/.vim/vim-pkg/usr/bin/vim $LOCAL/.vim/my-tools/vim
 }
 
 function uninstall()
