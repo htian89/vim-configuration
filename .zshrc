@@ -71,6 +71,8 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=008'
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
 
+autoload bashcompinit
+bashcompinit
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -103,7 +105,13 @@ cd $HOME
 export PATH=$HOME/.vim/my-tools:$PATH
 #Vim configurations
 export VIMRUNTIME=$HOME/.vim/vim-pkg/usr/share/vim/vim81
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.vim/vim-pkg/usr/lib64/:$HOME/.vim/vim-pkg/usr/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.vim/vim-pkg/usr/lib64/:$HOME/.vim/vim-pkg/usr/lib/:$HOME/.local/usr/lib
 setopt no_nomatch
 export TERM=xterm-256color
 export CMAKE_ROOT=$HOME/.vim/cmake
+
+# include .bashrc.dev to setup dev commands
+source ~/.bashrc.dev
+
+alias git_up="sh /root/Work/wly/build_tools/environment/../../build_tools/blade3/git_up.sh"
+alias git_upload="python /root/Work/wly/build_tools/environment/../../build_tools/blade3/git_upload.py"

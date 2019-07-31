@@ -3,6 +3,17 @@
 " Args     : None
 " Returns  : Nothing
 " Author   : Hao Tian (herman.tian@outlook.com)
+
+" local defines
+let s:huichuan_excludes = [
+      \'wolong',
+      \'trigger_server',
+      \'ad_server',
+      \'app_ad_server*',
+      \'brand_server',
+      \'trigger_server',
+      \]
+
 function! RunAndEchoCommand(cmd)
   execute ":!echo " . a:cmd . " && " . a:cmd
 endfunction
@@ -45,7 +56,10 @@ function! s:ConstructSearchCommand(tool)
   elseif a:tool == "ag"
     let l:cmd = "ag --vimgrep -s --noaffinity --ignore-dir=tags "
           \ . "--ignore-dir=build64_* --ignore-dir=*.runfiles "
-          \ . "--ignore-dir=blade-bin "
+          \ . "--ignore-dir=blade-bin"
+    for l:exclude in s:huichuan_excludes
+      let l:cmd = l:cmd . ' --ignore-dir=' . l:exclude
+    endfor
   endif
   return l:cmd
 endfunction
@@ -98,10 +112,15 @@ function! CreateAndLoadCtags(option)
     \ --fields=+aiKSz
     \ --extra=+q
     \'
-  let l:retrieval_excludes = [
+  let l:common_excludes = [
     \'"*.js"',
     \'"*.o"',
     \'"lib*.so*"',
+    \'"*.sh"',
+    \'"*.py"',
+    \'"Makefile"',
+    \]
+  let l:retrieval_excludes = [
     \'addsubmodule.sh',
     \'BLADE_ROOT',
     \'build64_release',
@@ -121,7 +140,13 @@ function! CreateAndLoadCtags(option)
     \'output',
     \]
   let l:exclude_opt = ""
+  for l:exclude in l:common_excludes
+    let l:exclude_opt = l:exclude_opt . ' --exclude=' . l:exclude
+  endfor
   for l:exclude in l:retrieval_excludes
+    let l:exclude_opt = l:exclude_opt . ' --exclude=' . l:exclude
+  endfor
+  for l:exclude in s:huichuan_excludes
     let l:exclude_opt = l:exclude_opt . ' --exclude=' . l:exclude
   endfor
   " Create ctags
@@ -215,6 +240,21 @@ function! SetErrorFormat()
         \ ',' . l:part . '%f:%l:\ Failure' .
         \ ',%f:%l:\ undefined\ reference\ to\ %m'
 endfunction
+
+function! GotoJump()
+  jumps
+  let j = input("Please select your jump: ")
+  if j != ''
+    let pattern = '\v\c^\+'
+    if j =~ pattern
+      let j = substitute(j, pattern, '', 'g')
+      execute "normal " . j . "\<c-i>"
+    else
+      execute "normal " . j . "\<c-o>"
+    endif
+  endif
+endfunction
+nmap <Leader>jp :call GotoJump()<CR>
 
 " Use to test vim script
 comm! -nargs=? -bang Test call TestVimScript()

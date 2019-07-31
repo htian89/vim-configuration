@@ -121,6 +121,7 @@ function install_zsh() {
 }
 
 function install_cmake() {
+  local CMAKE_VERSION="3.11.2"
   centos_package_check "make wget"
   local pkg_name=cmake-$CMAKE_VERSION
   if [ ! -f $pkg_name.tar.gz ]; then

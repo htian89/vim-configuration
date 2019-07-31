@@ -166,6 +166,7 @@ let g:grepper = {}
 let g:grepper.stop = 1000
 let g:grepper.highlight = 1
 let g:grepper.switch = 1
+let g:grepper.dir = 'repo,file'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Set vimmake plugin
