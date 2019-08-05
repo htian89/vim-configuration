@@ -109,6 +109,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.vim/vim-pkg/usr/lib64/:$HOME/.vim
 setopt no_nomatch
 export TERM=xterm-256color
 export CMAKE_ROOT=$HOME/.vim/cmake
+export LESSCHARSET=utf-8 # Solve the problem of Chinese charaters garbled when using GIT.
 
 # include .bashrc.dev to setup dev commands
 source ~/.bashrc.dev

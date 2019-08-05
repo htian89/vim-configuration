@@ -5,13 +5,15 @@
 " Author   : Hao Tian (herman.tian@outlook.com)
 
 " local defines
-let s:huichuan_excludes = [
+let g:huichuan_excludes = [
       \'wolong',
+      \'zilong',
       \'trigger_server',
       \'ad_server',
       \'app_ad_server*',
       \'brand_server',
       \'trigger_server',
+      \'pub/src/huichuan',
       \]
 
 function! RunAndEchoCommand(cmd)
@@ -56,8 +58,8 @@ function! s:ConstructSearchCommand(tool)
   elseif a:tool == "ag"
     let l:cmd = "ag --vimgrep -s --noaffinity --ignore-dir=tags "
           \ . "--ignore-dir=build64_* --ignore-dir=*.runfiles "
-          \ . "--ignore-dir=blade-bin"
-    for l:exclude in s:huichuan_excludes
+          \ . "--ignore-dir=blade-bin "
+    for l:exclude in g:huichuan_excludes
       let l:cmd = l:cmd . ' --ignore-dir=' . l:exclude
     endfor
   endif
@@ -71,7 +73,7 @@ function! GrepWord(bang, ...)
 endfunction
 
 function! GrepWordCpp(bang, ...)
-  let cmd = "Grepper -grepprg " . s:ConstructSearchCommand("ag") . "--cpp "
+  let cmd = "Grepper -grepprg " . s:ConstructSearchCommand("ag") . " --cpp "
         \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction
@@ -146,7 +148,7 @@ function! CreateAndLoadCtags(option)
   for l:exclude in l:retrieval_excludes
     let l:exclude_opt = l:exclude_opt . ' --exclude=' . l:exclude
   endfor
-  for l:exclude in s:huichuan_excludes
+  for l:exclude in g:huichuan_excludes
     let l:exclude_opt = l:exclude_opt . ' --exclude=' . l:exclude
   endfor
   " Create ctags
