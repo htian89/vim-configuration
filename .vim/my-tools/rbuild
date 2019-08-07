@@ -16,6 +16,7 @@ if __name__ == "__main__":
     else:
         current_dir = pwd_dir
         while current_dir != '/':
+            print current_dir
             if os.path.exists(current_dir + '/BLADE_ROOT'):
                 break;
             current_dir = os.path.dirname(current_dir)
@@ -30,9 +31,15 @@ if __name__ == "__main__":
             elif os.path.exists(current_dir + '/src'):
                 build_tool = './build.sh'
                 os.chdir(current_dir + '/src')
+            elif os.path.exists(current_dir + '/pub'):
+                build_tool = 'make opt -j16'
+                os.chdir(current_dir)
         else:
                 os.chdir(pwd_dir)
-                build_tool = './build.sh'
+                if os.path.exists(pwd_dir + '/build.sh'):
+                    build_tool = './build.sh'
+                else:
+                    build_tool = 'make -j16'
 
     # Arguments parse
     arguments = ''

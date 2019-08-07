@@ -6,14 +6,14 @@
 
 " local defines
 let g:huichuan_excludes = [
-      \'wolong',
-      \'zilong',
-      \'trigger_server',
-      \'ad_server',
-      \'app_ad_server*',
-      \'brand_server',
-      \'trigger_server',
-      \'pub/src/huichuan',
+      \'"wolong"',
+      \'"zilong"',
+      \'"trigger_server"',
+      \'"ad_server"',
+      \'"app_ad_server*"',
+      \'"brand_server"',
+      \'"trigger_server"',
+      \'"pub/src/huichuan"',
       \]
 
 function! RunAndEchoCommand(cmd)
@@ -67,13 +67,13 @@ function! s:ConstructSearchCommand(tool)
 endfunction
 
 function! GrepWord(bang, ...)
-  let cmd = "Grepper -grepprg " . s:ConstructSearchCommand("ag")
+  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag")
         \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction
 
 function! GrepWordCpp(bang, ...)
-  let cmd = "Grepper -grepprg " . s:ConstructSearchCommand("ag") . " --cpp "
+  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag") . " --cpp --hh --proto"
         \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction
