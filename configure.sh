@@ -34,6 +34,16 @@ kana/vim-operator-user
 
 github_ssh='git@github.com:'
 github_https='https://github.com/'
+sysOS=`uname -s`
+if [ $sysOS == "Darwin" ];then
+	install_cmd='brew install'
+	checkpkg_cmd='brew info'
+elif [ $sysOS == "Linux" ];then
+	install_cmd='sudo yum install -y'
+	checkpkg_cmd='rpm -q'
+else
+	echo "Other OS: $sysOS"
+fi
 
 function execshell() {
   echo "[execshell]$@ begin."
@@ -68,35 +78,34 @@ function link_target() {
   done
 }
 
-function centos_package_check() {
+function package_check() {
   local packages=$@
   for pkg in ${packages[@]}; do
-    rpm -q ${pkg} &> /dev/null
+    ${checkpkg_cmd} ${pkg} &> /dev/null
     if [ $? -ne 0 ]; then
       list+=(${pkg})
     fi
   done
   if [ ${#list[@]} -ne 0 ]; then
-    sudo yum install -y ${list[@]}
+    ${install_cmd} ${list[@]}
   fi
 }
 
 function install() {
-  yum -y install @development
-  centos_package_check "epel-release"
-  centos_package_check "the_silver_searcher ctags clang cmake gcc gcc-c++"
+  package_check epel-release the_silver_searcher ctags clang cmake gcc gcc-c++
   if command_exists clang-format; then
     echo "Dump clang format config to $HOME/.clang-format"
     clang-format --style=google --dump-config > $HOME/.clang-format
   else
+    echo "Need clang"
     exit 1
   fi
 
   link_target .vim .vimrc
 
-  cd $LOCAL/.vim/bundle/YouCompleteMe
-    git submodule update --init --recursive
-    ./install.py --clang-completer || exit 1
+  cd $HOME/.vim/bundle/YouCompleteMe
+  git submodule update --init --recursive
+  ./install.py --clang-completer || exit 1
   cd -
 
   echo "#My-tools configurations" >> $HOME/.bash_profile
@@ -104,8 +113,7 @@ function install() {
 }
 
 function install_zsh() {
-  centos_package_check "git zsh autojump autojump-fish autojump-zsh \
-    the_silver_searcher ctags"
+  package_check "git zsh autojump the_silver_searcher ctags"
   execshell link_target ".zshrc"
 
   sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
@@ -122,7 +130,7 @@ function install_zsh() {
 
 function install_cmake() {
   local CMAKE_VERSION="3.11.2"
-  centos_package_check "make wget"
+  package_check "make wget"
   local pkg_name=cmake-$CMAKE_VERSION
   if [ ! -f $pkg_name.tar.gz ]; then
     execshell "wget https://cmake.org/files/v3.11/$pkg_name.tar.gz"
@@ -156,10 +164,10 @@ function download_vim() {
 
 #./configure --prefix=/usr --with-features=huge --enable-pythoninterp --enable-python3interp --disable-perlinterp --disable-tclinterp --with-x=no --enable-gui=no --enable-multibyte --enable-cscope
 function build_vim() {
-  #download_vim
-  centos_package_check "cscope ncurses ncurses-devel ncurses-libs ncurses-base \
-    python-libs ruby-devel python34 python34-pip python-devel python34-devel"
-  cd $LOCAL/.vim/vim-source-code
+  package_check "cscope ncurses ncurses-devel ncurses-libs ncurses-base \
+    python-libs ruby-devel python34 python34-pip python-devel python3-devel \
+    python34-devel"
+  cd $HOME/.vim/vim-source-code
   make distclean
   ./configure \
     --prefix=/usr \
@@ -250,6 +258,8 @@ function usage()
     uninstall       uninstall vim configurations
     build_vim       build vim
     install_vim     install vim
+    install_zsh     install zsh
+    install_cmake   install cmake
     add_sub         add submodule
     co_sub          checkout submodules
     up_sub          update submodules
