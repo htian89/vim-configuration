@@ -113,10 +113,12 @@ function install() {
 }
 
 function install_zsh() {
-  package_check "git zsh autojump the_silver_searcher ctags"
-  execshell link_target ".zshrc"
+  package_check "git zsh autojump autojump-fish autojump-zsh \
+    the_silver_searcher ctags"
 
   sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+  execshell link_target ".zshrc"
 
   cd $HOME/.oh-my-zsh/custom/plugins/
   if [ ! -d zsh-autosuggestions ]; then
@@ -193,6 +195,8 @@ function install_vim()
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:\$HOME/.vim/vim-pkg/usr/lib64/:\$HOME/.vim/vim-pkg/usr/lib/" >> $HOME/.bash_profile
     /bin/rm -f $LOCAL/.vim/my-tools/vim
     ln -s $LOCAL/.vim/vim-pkg/usr/bin/vim $LOCAL/.vim/my-tools/vim
+    /bin/rm -f $LOCAL/.vim/my-tools/vimdiff
+    ln -s $LOCAL/.vim/vim-pkg/usr/bin/vimdiff $LOCAL/.vim/my-tools/vimdiff
 }
 
 function uninstall()

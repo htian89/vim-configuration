@@ -73,7 +73,8 @@ function! GrepWord(bang, ...)
 endfunction
 
 function! GrepWordCpp(bang, ...)
-  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag") . " --cpp --hh --proto"
+  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag")
+        \ . " --cpp --hh --proto "
         \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction

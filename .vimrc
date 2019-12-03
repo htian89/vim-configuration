@@ -316,16 +316,17 @@ if f_n == "BUILD"
 endif
 " Get file type
 let f_t = expand("%:e")
-" Auto load tags
-if f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py" || f_t == "cpp"
-  if !filereadable("./tags")
+if expand('%') == '' || f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py"
+      \ || f_t == "cpp"
+  " Auto load tags
+  if filereadable("./tags")
     autocmd VimEnter * call CreateAndLoadCtags("only load")
   endif
   autocmd VimEnter * call SetErrorFormat()
 endif
 " Auto open Tagbar and Colorcolumn
-if f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py" || f_t == "vim"
-    \ || f_t == "sh" || f_t == "txt" || f_t == "cpp"
+if expand('%') == '' || f_t == "cc" || f_t == "h" || f_t == "c" || f_t == "py"
+    \ || f_t == "vim" || f_t == "sh" || f_t == "txt" || f_t == "cpp"
   " Auto remove trailing space
   " autocmd BufReadPost * :%s/\s\+$//e
   autocmd BufWritePre * :%s/\s\+$//e
