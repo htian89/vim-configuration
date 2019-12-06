@@ -101,14 +101,26 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 cd $HOME
-# [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 #My-tools configurations
 export PATH=$HOME/.vim/my-tools:$PATH
 #Vim configurations
-export VIMRUNTIME=$HOME/.vim/vim-pkg/usr/share/vim/vim81
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.vim/vim-pkg/usr/lib64/:$HOME/.vim/vim-pkg/usr/lib/:$HOME/.local/usr/lib
 setopt no_nomatch
 export TERM=xterm-256color
 export CMAKE_ROOT=$HOME/.vim/cmake
 export LESSCHARSET=utf-8 # Solve the problem of Chinese charaters garbled when using GIT.
-#eval $(thefuck --alias)
+
+sysOS=`uname -s`
+if [ $sysOS == "Darwin" ];then
+  [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+elif [ $sysOS == "Linux" ];then
+  if [ -d $HOME/.vim/vim-pkg/usr/share/vim/vim81 ]; then
+    export VIMRUNTIME=$HOME/.vim/vim-pkg/usr/share/vim/vim81
+  fi
+else
+	echo "Other OS: $sysOS"
+fi
+
+if command -v thefuck >/dev/null 2>&1; then
+  eval $(thefuck --alias)
+fi
