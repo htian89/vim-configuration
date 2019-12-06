@@ -7,13 +7,13 @@
 " local defines
 let g:huichuan_excludes = [
       \'"wolong"',
-      \'"zilong"',
       \'"trigger_server"',
       \'"ad_server"',
       \'"app_ad_server*"',
       \'"brand_server"',
       \'"trigger_server"',
       \'"pub/src/huichuan"',
+      \'"pub/src/i18n_huichuan"',
       \]
 
 function! RunAndEchoCommand(cmd)
@@ -52,7 +52,7 @@ endfunction
 
 function! s:ConstructSearchCommand(tool)
   if a:tool == "grep"
-    let cmd = "grep . -Irn --color --exclude=tags "
+    let l:cmd = "grep . -Irn --color --exclude=tags "
           \ . "--exclude-dir=*.runfiles --exclude-dir=build64_* "
           \ . "--exclude-dir=blade-bin -e "
   elseif a:tool == "ag"
@@ -66,18 +66,24 @@ function! s:ConstructSearchCommand(tool)
   return l:cmd
 endfunction
 
+" Global search word
 function! GrepWord(bang, ...)
-  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag")
+  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag") . " "
         \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction
-
-function! GrepWordCpp(bang, ...)
-  let cmd = "Grepper -tool ag -grepprg " . s:ConstructSearchCommand("ag")
-        \ . " --cpp --hh --proto "
-        \ . join(a:000, ' ')
-  call RunAndEchoVimCommand(cmd)
-endfunction
+comm! -nargs=? -bang Grep call GrepWord("<bang>", "--cpp", "--hh", <f-args>)
+comm! -nargs=? -bang Greph call GrepWord("<bang>", "--hh", <f-args>)
+comm! -nargs=? -bang Grepp call GrepWord("<bang>", "--proto", <f-args>)
+comm! -nargs=? -bang Grepw call GrepWord("<bang>", <f-args>)
+let t_ignore_path = "--ignore-dir=ad_server_v2 --ignore-dir=media_server --ignore-dir=exchange_server"
+comm! -nargs=? -bang TGrep call GrepWord("<bang>", t_ignore_path, "--cpp", <f-args>)
+let a_ignore_path = "--ignore-dir=trigger_server_v2 --ignore-dir=media_server --ignore-dir=exchange_server"
+comm! -nargs=? -bang AGrep call GrepWord("<bang>", a_ignore_path, "--cpp", <f-args>)
+let e_ignore_path = "--ignore-dir=trigger_server_v2 --ignore-dir=media_server --ignore-dir=ad_server_v2"
+comm! -nargs=? -bang EGrep call GrepWord("<bang>", e_ignore_path, "--cpp", <f-args>)
+let m_ignore_path = "--ignore-dir=trigger_server_v2 --ignore-dir=exchange_server --ignore-dir=ad_server_v2"
+comm! -nargs=? -bang MGrep call GrepWord("<bang>", m_ignore_path, "--cpp", <f-args>)
 
 function! AsyncGrepWord(bang, ...)
   let cmd = "AsyncRun " . s:ConstructSearchCommand("ag")
@@ -264,9 +270,6 @@ comm! -nargs=? -bang Test call TestVimScript()
 " Colorcolumn toggle
 comm! -nargs=? -bang CC call AlternateColorColumn(<f-args>)
 " nmap <Leader>cc :CC<CR>
-" Global search word
-comm! -nargs=? -bang Grep call GrepWordCpp("<bang>", <f-args>)
-comm! -nargs=? -bang Grepw call GrepWord("<bang>", <f-args>)
 " Search Gflag
 comm! -nargs=? -bang SF call SearchGflag("<bang>", <f-args>)
 " Unused command, copy from internet
