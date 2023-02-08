@@ -1,0 +1,6 @@
+#!/usr/bin/expect
+set timeout 30
+spawn ssh -o ServerAliveInterval=30 yimu.th@login1.su18.alibaba.org
+expect "please enter your password"
+send "Herman@0614"
+interact

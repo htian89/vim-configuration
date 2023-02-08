@@ -1,0 +1,2 @@
+#!/bin/sh
+sshpass -f ~/.ssh/137_password ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null yimu.th@11.164.95.137
