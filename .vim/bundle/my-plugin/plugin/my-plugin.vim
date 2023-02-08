@@ -9,9 +9,27 @@ let g:huichuan_excludes = [
       \'"wolong"',
       \'"trigger_server"',
       \'"ad_server"',
-      \'"app_ad_server*"',
+      \'"new_brand_server"',
+      \'"app_*"',
       \'"brand_server"',
       \'"trigger_server"',
+      \'"huichuan_build_index"',
+      \'"pub/src/huichuan"',
+      \'"pub/src/i18n_huichuan"',
+      \]
+
+let g:huichuan_grep_excludes = [
+      \'"wolong"',
+      \'"zilong"',
+      \'"pub"',
+      \'"vertical"',
+      \'"trigger_server"',
+      \'"ad_server"',
+      \'"new_brand_server"',
+      \'"app_*"',
+      \'"brand_server"',
+      \'"trigger_server"',
+      \'"huichuan_build_index"',
       \'"pub/src/huichuan"',
       \'"pub/src/i18n_huichuan"',
       \]
@@ -34,7 +52,7 @@ function! AlternateColorColumn(...)
     elseif &colorcolumn != 0
         set colorcolumn=0
     else
-        set colorcolumn=81
+        set colorcolumn=111
     endif
 endfunction
 
@@ -59,7 +77,7 @@ function! s:ConstructSearchCommand(tool)
     let l:cmd = "ag --vimgrep -s --noaffinity --ignore-dir=tags "
           \ . "--ignore-dir=build64_* --ignore-dir=*.runfiles "
           \ . "--ignore-dir=blade-bin "
-    for l:exclude in g:huichuan_excludes
+    for l:exclude in g:huichuan_grep_excludes
       let l:cmd = l:cmd . ' --ignore-dir=' . l:exclude
     endfor
   endif
@@ -72,18 +90,49 @@ function! GrepWord(bang, ...)
         \ . join(a:000, ' ')
   call RunAndEchoVimCommand(cmd)
 endfunction
-comm! -nargs=? -bang Grep call GrepWord("<bang>", "--cpp", "--hh", <f-args>)
+function! SpecGrepWord(bang, ...)
+  let cmd = "Grepper -tool ag -grepprg vim-ag " . join(a:000, ' ')
+  call RunAndEchoVimCommand(cmd)
+endfunction
+function! LocalGrepWord(bang, ...)
+  " echo getcwd()
+  " echo expand('%:p:h')
+  let l:f_path = substitute(expand('%:p:h'), getcwd() . "/", "", "g")
+  " echo l:path
+  " echo SplitPath(l:f_path)
+  let l:paths = SplitPath(l:f_path)
+  let l:path = l:paths[0]
+  if index(["huichuan", "wolong", "serving_base", "common"], l:path) >= 0
+    let l:path = l:paths[1]
+    if index(["common/rta"], l:path) >= 0
+      let l:path = l:paths[2]
+    endif
+  endif
+  let cmd = "Grepper -tool ag -grepprg vim-ag " . l:path . " ". join(a:000, ' ')
+  call RunAndEchoVimCommand(cmd)
+endfunction
+
+comm! -nargs=? -bang Agrep call GrepWord("<bang>", "--cpp", "--hh", <f-args>)
 comm! -nargs=? -bang Greph call GrepWord("<bang>", "--hh", <f-args>)
 comm! -nargs=? -bang Grepp call GrepWord("<bang>", "--proto", <f-args>)
 comm! -nargs=? -bang Grepw call GrepWord("<bang>", <f-args>)
 let t_ignore_path = "--ignore-dir=ad_server_v2 --ignore-dir=media_server --ignore-dir=exchange_server"
-comm! -nargs=? -bang TGrep call GrepWord("<bang>", t_ignore_path, "--cpp", <f-args>)
+"comm! -nargs=? -bang TGrep call GrepWord("<bang>", t_ignore_path, "--cpp", <f-args>)
+comm! -nargs=? -bang Grept call SpecGrepWord("<bang>", "huichuan/trigger_server_v2", <f-args>)
+"nmap <Leader>g :call SpecGrepWord("<bang>", "huichuan/trigger_server_v2")<CR>
+nmap <Leader>g :Lgrep<CR>
 let a_ignore_path = "--ignore-dir=trigger_server_v2 --ignore-dir=media_server --ignore-dir=exchange_server"
-comm! -nargs=? -bang AGrep call GrepWord("<bang>", a_ignore_path, "--cpp", <f-args>)
+"comm! -nargs=? -bang AGrep call GrepWord("<bang>", a_ignore_path, "--cpp", <f-args>)
+comm! -nargs=? -bang Grepa call SpecGrepWord("<bang>", "huichuan/ad_server_v2", <f-args>)
 let e_ignore_path = "--ignore-dir=trigger_server_v2 --ignore-dir=media_server --ignore-dir=ad_server_v2"
-comm! -nargs=? -bang EGrep call GrepWord("<bang>", e_ignore_path, "--cpp", <f-args>)
+"comm! -nargs=? -bang EGrep call GrepWord("<bang>", e_ignore_path, "--cpp", <f-args>)
+comm! -nargs=? -bang Grepe call SpecGrepWord("<bang>", "huichuan/exchange_server", <f-args>)
 let m_ignore_path = "--ignore-dir=trigger_server_v2 --ignore-dir=exchange_server --ignore-dir=ad_server_v2"
-comm! -nargs=? -bang MGrep call GrepWord("<bang>", m_ignore_path, "--cpp", <f-args>)
+"comm! -nargs=? -bang MGrep call GrepWord("<bang>", m_ignore_path, "--cpp", <f-args>)
+comm! -nargs=? -bang Grepm call SpecGrepWord("<bang>", "huichuan/media_server", <f-args>)
+comm! -nargs=? -bang Greppath call SpecGrepWord("<bang>", <f-args>)
+comm! -nargs=? -bang Lgrep call LocalGrepWord("<bang>", <f-args>)
+comm! -nargs=? -bang Grep call LocalGrepWord("<bang>", <f-args>)
 
 function! AsyncGrepWord(bang, ...)
   let cmd = "AsyncRun " . s:ConstructSearchCommand("ag")
@@ -247,7 +296,9 @@ function! SetErrorFormat()
         \ ',./' . l:part . '%f:%l:%c\ error:\ %m' .
         \ ',./' . l:part . '%f:%l:\ error:\ %m' .
         \ ',' . l:part . '%f:%l:\ Failure' .
-        \ ',%f:%l:\ undefined\ reference\ to\ %m'
+        \ ',' . l:part . '%f:%l:%c:\ %m' .
+        \ ',' . l:part . '%f:%l:\ %m' .
+        \ ',' . l:part . '%f:%l:\ undefined\ reference\ to\ %m'
 endfunction
 
 function! GotoJump()
@@ -263,7 +314,7 @@ function! GotoJump()
     endif
   endif
 endfunction
-nmap <Leader>jp :call GotoJump()<CR>
+nmap <Leader>j :call GotoJump()<CR>
 
 " Use to test vim script
 comm! -nargs=? -bang Test call TestVimScript()

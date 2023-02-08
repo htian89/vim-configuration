@@ -44,6 +44,15 @@ The commands I always use:
 		    0 数字0,跳转至行首
 		    ^ 跳转至行第一个非空字符
 		    $ 跳转至行尾
+
+		    ctrl-y 向上一行
+		    ctrl-e 向下一行
+		    ctrl-u 向上半屏
+		    ctrl-d 向下半屏
+		    ctrl-b 向上一屏
+		    ctrl-f 向下一屏
+		    shift-m 将光标移动到屏幕中间
+		    zz 使所在行对齐到正中
 		2,多处跳转：
 		    g] 等价于|:tselect|, List the tags that match [ident]
 		3,格式化文本，调整缩进

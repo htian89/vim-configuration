@@ -1,0 +1,2 @@
+#!/bin/sh
+ag --vimgrep -s --noaffinity --ignore huichuan/include/public.h $2 $1 huichuan/include
