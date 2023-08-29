@@ -1,90 +1,90 @@
 [submodule ".vim/bundle/YouCompleteMe"]
 	path = .vim/bundle/YouCompleteMe
-	url = https://github.com/Valloric/YouCompleteMe.git
+	url = git@github.com:ycm-core/YouCompleteMe.git
 [submodule ".vim/bundle/auto-pairs"]
 	path = .vim/bundle/auto-pairs
-	url = https://github.com/jiangmiao/auto-pairs.git
+	url = git@github.com:jiangmiao/auto-pairs.git
 [submodule ".vim/bundle/jedi-vim"]
 	path = .vim/bundle/jedi-vim
-	url = https://github.com/davidhalter/jedi-vim.git
+	url = git@github.com:davidhalter/jedi-vim.git
 [submodule ".vim/bundle/neobundle.vim"]
 	path = .vim/bundle/neobundle.vim
-	url = https://github.com/Shougo/neobundle.vim.git
+	url = git@github.com:Shougo/neobundle.vim.git
 [submodule ".vim/bundle/neocomplcache.vim"]
 	path = .vim/bundle/neocomplcache.vim
-	url = https://github.com/Shougo/neocomplcache.vim.git
+	url = git@github.com:Shougo/neocomplcache.vim.git
 [submodule ".vim/bundle/neocomplete.vim"]
 	path = .vim/bundle/neocomplete.vim
-	url = https://github.com/Shougo/neocomplete.vim.git
+	url = git@github.com:Shougo/neocomplete.vim.git
 [submodule ".vim/bundle/neosnippet.vim"]
 	path = .vim/bundle/neosnippet.vim
-	url = https://github.com/Shougo/neosnippet.vim.git
+	url = git@github.com:Shougo/neosnippet.vim.git
 [submodule ".vim/bundle/neosnippet-snippets"]
 	path = .vim/bundle/neosnippet-snippets
-	url = https://github.com/Shougo/neosnippet-snippets.git
+	url = git@github.com:Shougo/neosnippet-snippets.git
 [submodule ".vim/bundle/nerdtree"]
 	path = .vim/bundle/nerdtree
-	url = https://github.com/scrooloose/nerdtree.git
+	url = git@github.com:scrooloose/nerdtree.git
 [submodule ".vim/bundle/python-mode"]
 	path = .vim/bundle/python-mode
-	url = https://github.com/klen/python-mode.git
+	url = git@github.com:klen/python-mode.git
 [submodule ".vim/bundle/tagbar"]
 	path = .vim/bundle/tagbar
-	url = https://github.com/majutsushi/tagbar.git
+	url = git@github.com:majutsushi/tagbar.git
 [submodule ".vim/bundle/vim-airline-themes"]
 	path = .vim/bundle/vim-airline-themes
-	url = https://github.com/vim-airline/vim-airline-themes.git
+	url = git@github.com:vim-airline/vim-airline-themes.git
 [submodule ".vim/bundle/vim-airline"]
 	path = .vim/bundle/vim-airline
-	url = https://github.com/vim-airline/vim-airline.git
+	url = git@github.com:vim-airline/vim-airline.git
 [submodule ".vim/bundle/vim-pathogen"]
 	path = .vim/bundle/vim-pathogen
-	url = https://github.com/tpope/vim-pathogen.git
+	url = git@github.com:tpope/vim-pathogen.git
 [submodule ".vim/bundle/minibufexpl.vim"]
 	path = .vim/bundle/minibufexpl.vim
-	url = https://github.com/fholgado/minibufexpl.vim.git
+	url = git@github.com:fholgado/minibufexpl.vim.git
 [submodule ".vim/bundle/vim-startify"]
 	path = .vim/bundle/vim-startify
-	url = https://github.com/mhinz/vim-startify.git
+	url = git@github.com:mhinz/vim-startify.git
 [submodule ".vim/bundle/taglist.vim"]
 	path = .vim/bundle/taglist.vim
-	url = https://github.com/vim-scripts/taglist.vim.git
+	url = git@github.com:vim-scripts/taglist.vim.git
 [submodule ".vim/bundle/vim-snippets"]
 	path = .vim/bundle/vim-snippets
-	url = https://github.com/honza/vim-snippets.git
+	url = git@github.com:honza/vim-snippets.git
 [submodule ".vim/bundle/vim-powerline"]
 	path = .vim/bundle/vim-powerline
-	url = https://github.com/Lokaltog/vim-powerline.git
+	url = git@github.com:Lokaltog/vim-powerline.git
 [submodule ".vim/bundle/asyncrun.vim"]
 	path = .vim/bundle/asyncrun.vim
-	url = https://github.com/skywind3000/asyncrun.vim.git
-[submodule ".vim/bundle/vimmake"]
-	path = .vim/bundle/vimmake
-	url = https://github.com/skywind3000/vimmake.git
+	url = git@github.com:skywind3000/asyncrun.vim.git
+[submodule ".vim/bundle/vim"]
+	path = .vim/bundle/vim
+	url = git@github.com:skywind3000/vim.git
 [submodule ".vim/bundle/errormarker.vim"]
 	path = .vim/bundle/errormarker.vim
-	url = https://github.com/vim-scripts/errormarker.vim.git
+	url = git@github.com:vim-scripts/errormarker.vim.git
 [submodule ".vim/bundle/vim-fugitive"]
 	path = .vim/bundle/vim-fugitive
-	url = https://github.com/tpope/vim-fugitive.git
+	url = git@github.com:tpope/vim-fugitive.git
 [submodule ".vim/bundle/vim-grepper"]
 	path = .vim/bundle/vim-grepper
-	url = https://github.com/mhinz/vim-grepper.git
+	url = git@github.com:mhinz/vim-grepper.git
 [submodule ".vim/bundle/vim-clang-format"]
 	path = .vim/bundle/vim-clang-format
-	url = https://github.com/rhysd/vim-clang-format.git
+	url = git@github.com:rhysd/vim-clang-format.git
 [submodule ".vim/bundle/vim-operator-user"]
 	path = .vim/bundle/vim-operator-user
-	url = https://github.com/kana/vim-operator-user.git
+	url = git@github.com:kana/vim-operator-user.git
 [submodule ".vim/bundle/Conque-GDB"]
 	path = .vim/bundle/Conque-GDB
-	url = https://github.com/vim-scripts/Conque-GDB.git
+	url = git@github.com:vim-scripts/Conque-GDB.git
 [submodule ".vim/bundle/dein.vim"]
 	path = .vim/bundle/dein.vim
-	url = https://github.com/Shougo/dein.vim.git
+	url = git@github.com:Shougo/dein.vim.git
 [submodule ".vim/bundle/deoplete.nvim"]
 	path = .vim/bundle/deoplete.nvim
-	url = https://github.com/Shougo/deoplete.nvim.git
+	url = git@github.com:Shougo/deoplete.nvim.git
 [submodule ".vim/vim-source-code"]
 	path = .vim/vim-source-code
-	url = https://github.com/vim/vim.git
+	url = git@github.com:vim/vim.git

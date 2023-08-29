@@ -92,7 +92,7 @@ function package_check() {
 }
 
 function install() {
-  package_check epel-release the_silver_searcher ctags clang cmake gcc gcc-c++
+  #package_check the_silver_searcher ctags clang cmake gcc gcc-c++
   if command_exists clang-format; then
     echo "Dump clang format config to $HOME/.clang-format"
     clang-format --style=google --dump-config > $HOME/.clang-format
@@ -103,10 +103,10 @@ function install() {
 
   link_target .vim .vimrc
 
-  cd $HOME/.vim/bundle/YouCompleteMe
-  git submodule update --init --recursive
-  ./install.py --clang-completer || exit 1
-  cd -
+  #cd $HOME/.vim/bundle/YouCompleteMe
+  #git submodule update --init --recursive
+  #./install.py --clang-completer || exit 1
+  #cd -
 
   echo "#My-tools configurations" >> $HOME/.bash_profile
   echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile
