@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""
+rbuild — Remote build via tmux (survives network drops).
+
+Usage:
+  rbuild [args...]       Build in tmux, attach to see output (default).
+  rbuild -d [args...]    Build in tmux background, detach immediately.
+  rbuild -a              Reattach to existing tmux build session.
+  rbuild -k              Kill existing tmux build session.
+  rbuild -s              Show tmux build session status.
+"""
+
+import shlex
+import subprocess
+import sys
+from pathlib import Path
+
+
+REMOTE = "yimu.th@11.164.95.137"
+REMOTE_RBUILD = "~/vim-configuration/.vim/my-tools/rbuild"
+REMOTE_TMUX = "LD_LIBRARY_PATH=/data9/yimu.th/.local/usr/lib64 /data9/yimu.th/.local/usr/bin/tmux"
+LOCAL_HOME = Path("/Users/yimu")
+REMOTE_HOME = "/home/yimu.th"
+SESSION = "rbuild"
+
+
+def remote_cwd() -> str:
+    cwd = Path.cwd().resolve()
+    try:
+        relative = cwd.relative_to(LOCAL_HOME)
+    except ValueError:
+        print(f"rbuild: not under {LOCAL_HOME}: {cwd}", file=sys.stderr)
+        raise SystemExit(2)
+    if str(relative) == ".":
+        return REMOTE_HOME
+    return f"{REMOTE_HOME}/{relative}"
+
+
+def build_cmd(args: list[str]) -> str:
+    parts = [REMOTE_RBUILD, *(shlex.quote(a) for a in args)]
+    return f"cd {shlex.quote(remote_cwd())} && {' '.join(parts)}"
+
+
+def _ssh(args: list[str], tty: bool = False) -> int:
+    cmd = ["ssh"]
+    if tty:
+        cmd.append("-t")
+    cmd.append(REMOTE)
+    cmd.extend(args)
+    return subprocess.call(cmd)
+
+
+def _has_session() -> bool:
+    return (
+        subprocess.call(
+            ["ssh", REMOTE, f"{REMOTE_TMUX} has-session -t {SESSION} 2>/dev/null"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        == 0
+    )
+
+
+def _attach() -> int:
+    return _ssh([REMOTE_TMUX, "attach-session", "-t", SESSION], tty=True)
+
+
+# ── commands ──────────────────────────────────────────────
+
+
+def cmd_attach(build_args: list[str]) -> int:
+    """Default: run build in tmux, attach to see output."""
+    if _has_session():
+        print(f"rbuild: tmux session '{SESSION}' exists, attaching...")
+        return _attach()
+
+    cmd = build_cmd(build_args)
+    # 1) create tmux session in detached mode, run build inside it
+    _ssh([
+        REMOTE_TMUX, "new-session", "-d",
+        "-s", SESSION,
+        "-c", remote_cwd(),
+        cmd,
+    ])
+    # 2) set session to stay alive after build finishes (so you can review output)
+    _ssh([REMOTE_TMUX, "set-option", "-t", SESSION, "remain-on-exit", "on"])
+    # 3) attach
+    print(f"rbuild: started build in tmux session '{SESSION}'")
+    return _attach()
+
+
+def cmd_detach(build_args: list[str]) -> int:
+    """-d: start build in tmux background, don't attach."""
+    if _has_session():
+        print(f"rbuild: session '{SESSION}' already running")
+        print(f"  attach:  rbuild -a")
+        print(f"  kill:    rbuild -k")
+        return 1
+
+    cmd = build_cmd(build_args)
+    rc = _ssh([
+        REMOTE_TMUX, "new-session", "-d",
+        "-s", SESSION,
+        "-c", remote_cwd(),
+        cmd,
+    ])
+    if rc != 0:
+        return rc
+    _ssh([REMOTE_TMUX, "set-option", "-t", SESSION, "remain-on-exit", "on"])
+    print(f"rbuild: build started in background tmux session '{SESSION}'")
+    print(f"  attach:  rbuild -a")
+    print(f"  kill:    rbuild -k")
+    return 0
+
+
+def cmd_attach_only() -> int:
+    """-a: just attach to existing session."""
+    if not _has_session():
+        print(f"rbuild: no tmux session '{SESSION}' found")
+        return 1
+    return _attach()
+
+
+def cmd_kill() -> int:
+    """-k: kill existing tmux session."""
+    if not _has_session():
+        print(f"rbuild: no tmux session '{SESSION}'")
+        return 1
+    rc = _ssh([REMOTE_TMUX, "kill-session", "-t", SESSION])
+    if rc == 0:
+        print(f"rbuild: session '{SESSION}' killed")
+    return rc
+
+
+def cmd_status() -> int:
+    """-s: show session info."""
+    if not _has_session():
+        print(f"rbuild: no tmux session '{SESSION}'")
+        return 1
+    return _ssh([REMOTE_TMUX, "display-message", "-t", SESSION, "-p",
+                 "Session: #{session_name}  Created: #{session_created}  Windows: #{session_windows}"])
+
+
+# ── main ──────────────────────────────────────────────────
+
+
+def main() -> int:
+    args = sys.argv[1:]
+
+    if not args:
+        # No arguments → attach mode, run rbuild with no build args
+        return cmd_attach([])
+
+    flag = args[0]
+    rest = args[1:]
+
+    if flag in ("-d", "--detach"):
+        return cmd_detach(rest)
+    elif flag in ("-a", "--attach"):
+        return cmd_attach_only()
+    elif flag in ("-k", "--kill"):
+        return cmd_kill()
+    elif flag in ("-s", "--status"):
+        return cmd_status()
+    elif flag in ("-h", "--help"):
+        print(__doc__)
+        return 0
+    else:
+        # Build arguments (e.g. rbuild --makefile)
+        return cmd_attach(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

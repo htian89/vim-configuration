@@ -103,10 +103,10 @@ function install() {
 
   link_target .vim .vimrc
 
-  #cd $HOME/.vim/bundle/YouCompleteMe
-  #git submodule update --init --recursive
-  #./install.py --clang-completer || exit 1
-  #cd -
+  cd $HOME/.vim/bundle/YouCompleteMe
+  git submodule update --init --recursive
+  ./install.py --clang-completer || exit 1
+  cd -
 
   echo "#My-tools configurations" >> $HOME/.bash_profile
   echo "export PATH=\$HOME/.vim/my-tools:\$PATH" >> $HOME/.bash_profile

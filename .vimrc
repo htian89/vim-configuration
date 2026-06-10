@@ -240,7 +240,7 @@ if 0
   call dein#add('Shougo/errormarker.vim')
   call dein#add('Shougo/vim-fugitive')
   call dein#add('Shougo/vim-grepper')
-  call dein#add('Shougo/Conque-GDB')
+  " call dein#add('Shougo/Conque-GDB')
   call dein#add('Shougo/vim-operator-user')
   call dein#add('Shougo/vim-clang-format')
 
@@ -289,7 +289,7 @@ else
   NeoBundle 'Shougo/errormarker.vim'
   NeoBundle 'Shougo/vim-fugitive'
   NeoBundle 'Shougo/vim-grepper'
-  NeoBundle 'Shougo/Conque-GDB'
+  " NeoBundle 'Shougo/Conque-GDB'
   NeoBundle 'Shougo/vim-operator-user'
   NeoBundle 'Shougo/vim-clang-format'
 

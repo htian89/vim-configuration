@@ -8,3 +8,5 @@ patch
 .vim/my-tools/cmake
 .vim/my-tools/vim
 .vim/.tmp_dir
+__pycache__
+.DS_Store
